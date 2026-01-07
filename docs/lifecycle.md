@@ -287,15 +287,13 @@ class MyService(private val registry: ServiceRegistry) : PlatformService {
 - Prevents resource leaks
 - Clear ownership
 
-## Alignment with Spotify Requirements
+## Benefits of This Approach
 
-This lifecycle system directly addresses Spotify's requirement:
+This lifecycle system provides:
 
-> "Use established service systems to manage application services and their lifecycles"
-
-The system provides:
 - Explicit lifecycle management
 - Service registry pattern
 - Clear initialization and shutdown
 - Testable service architecture
+- Established pattern for managing application services and their lifecycles
 

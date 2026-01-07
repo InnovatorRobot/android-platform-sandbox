@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.spotify.platform.playback"
+    namespace = "com.mediaplatform.playback"
     compileSdk = 34
 
     defaultConfig {

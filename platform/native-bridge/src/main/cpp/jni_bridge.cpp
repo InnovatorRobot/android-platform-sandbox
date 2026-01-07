@@ -132,35 +132,35 @@ void JniBridge::notifyStateChange(core_engine::PlaybackState oldState,
 extern "C" {
 
 JNIEXPORT jlong JNICALL
-Java_com_spotify_platform_nativebridge_NativeEngine_nativeCreate(JNIEnv *env,
-                                                                 jobject thiz) {
+Java_com_mediaplatform_nativebridge_NativeEngine_nativeCreate(JNIEnv *env,
+                                                              jobject thiz) {
   auto *bridge = new JniBridge();
   return reinterpret_cast<jlong>(bridge);
 }
 
 JNIEXPORT void JNICALL
-Java_com_spotify_platform_nativebridge_NativeEngine_nativeDestroy(
+Java_com_mediaplatform_nativebridge_NativeEngine_nativeDestroy(
     JNIEnv *env, jobject thiz, jlong nativePtr) {
   auto *bridge = reinterpret_cast<JniBridge *>(nativePtr);
   delete bridge;
 }
 
 JNIEXPORT jboolean JNICALL
-Java_com_spotify_platform_nativebridge_NativeEngine_nativeInitialize(
+Java_com_mediaplatform_nativebridge_NativeEngine_nativeInitialize(
     JNIEnv *env, jobject thiz, jlong nativePtr) {
   auto *bridge = reinterpret_cast<JniBridge *>(nativePtr);
   return bridge->initialize(env, thiz) ? JNI_TRUE : JNI_FALSE;
 }
 
 JNIEXPORT void JNICALL
-Java_com_spotify_platform_nativebridge_NativeEngine_nativeShutdown(
+Java_com_mediaplatform_nativebridge_NativeEngine_nativeShutdown(
     JNIEnv *env, jobject thiz, jlong nativePtr) {
   auto *bridge = reinterpret_cast<JniBridge *>(nativePtr);
   bridge->shutdown();
 }
 
 JNIEXPORT jboolean JNICALL
-Java_com_spotify_platform_nativebridge_NativeEngine_nativeLoadTrack(
+Java_com_mediaplatform_nativebridge_NativeEngine_nativeLoadTrack(
     JNIEnv *env, jobject thiz, jlong nativePtr, jstring trackId) {
   auto *bridge = reinterpret_cast<JniBridge *>(nativePtr);
   const char *trackIdStr = env->GetStringUTFChars(trackId, nullptr);
@@ -170,28 +170,31 @@ Java_com_spotify_platform_nativebridge_NativeEngine_nativeLoadTrack(
 }
 
 JNIEXPORT jboolean JNICALL
-Java_com_spotify_platform_nativebridge_NativeEngine_nativePlay(
-    JNIEnv *env, jobject thiz, jlong nativePtr) {
+Java_com_mediaplatform_nativebridge_NativeEngine_nativePlay(JNIEnv *env,
+                                                            jobject thiz,
+                                                            jlong nativePtr) {
   auto *bridge = reinterpret_cast<JniBridge *>(nativePtr);
   return bridge->play() ? JNI_TRUE : JNI_FALSE;
 }
 
 JNIEXPORT jboolean JNICALL
-Java_com_spotify_platform_nativebridge_NativeEngine_nativePause(
-    JNIEnv *env, jobject thiz, jlong nativePtr) {
+Java_com_mediaplatform_nativebridge_NativeEngine_nativePause(JNIEnv *env,
+                                                             jobject thiz,
+                                                             jlong nativePtr) {
   auto *bridge = reinterpret_cast<JniBridge *>(nativePtr);
   return bridge->pause() ? JNI_TRUE : JNI_FALSE;
 }
 
 JNIEXPORT jboolean JNICALL
-Java_com_spotify_platform_nativebridge_NativeEngine_nativeStop(
-    JNIEnv *env, jobject thiz, jlong nativePtr) {
+Java_com_mediaplatform_nativebridge_NativeEngine_nativeStop(JNIEnv *env,
+                                                            jobject thiz,
+                                                            jlong nativePtr) {
   auto *bridge = reinterpret_cast<JniBridge *>(nativePtr);
   return bridge->stop() ? JNI_TRUE : JNI_FALSE;
 }
 
 JNIEXPORT jint JNICALL
-Java_com_spotify_platform_nativebridge_NativeEngine_nativeGetState(
+Java_com_mediaplatform_nativebridge_NativeEngine_nativeGetState(
     JNIEnv *env, jobject thiz, jlong nativePtr) {
   auto *bridge = reinterpret_cast<JniBridge *>(nativePtr);
   return bridge->getState();

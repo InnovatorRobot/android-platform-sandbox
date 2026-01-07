@@ -8,7 +8,7 @@ This tool validates that:
 3. Platform modules follow dependency rules
 
 This demonstrates tooling for developer experience - a key aspect of
-platform engineering at Spotify.
+platform engineering.
 """
 
 import os

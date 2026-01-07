@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.spotify.platform.state"
+    namespace = "com.mediaplatform.state"
     compileSdk = 34
 
     defaultConfig {
