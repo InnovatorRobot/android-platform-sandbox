@@ -207,7 +207,7 @@ fun `playTrack loads track and plays`() {
 - Features depend on interfaces, not implementations
 - Easy to understand module responsibilities
 
-## 📊 Module Dependency Rules
+## Module Dependency Rules
 
 | Module | Can Depend On |
 |--------|---------------|
