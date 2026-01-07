@@ -17,7 +17,7 @@ This document defines the strict dependency rules that enforce module isolation 
 
 **Example Violations**:
 ```kotlin
-// ❌ FORBIDDEN
+// FORBIDDEN
 dependencies {
     implementation(project(":features:playback"))
 }
@@ -34,7 +34,7 @@ dependencies {
 
 **Allowed Dependencies**:
 ```kotlin
-// ✅ ALLOWED
+// ALLOWED
 dependencies {
     implementation(project(":platform:core"))
     implementation(project(":platform:state"))
@@ -94,11 +94,11 @@ python3 tools/dependency-checker/check_dependencies.py
 🔍 Checking module dependencies...
 Project root: /path/to/project
 
-✅ Checked 6 modules
+Checked 6 modules
 
-✅ All dependencies are valid!
+All dependencies are valid!
 
-📋 Module isolation rules:
+Module isolation rules:
   • Features never depend on other features
   • Features only depend on platform modules
   • Platform modules follow strict dependency rules
@@ -106,16 +106,16 @@ Project root: /path/to/project
 
 **Failure**:
 ```
-🔍 Checking module dependencies...
+Checking module dependencies...
 Project root: /path/to/project
 
-✅ Checked 6 modules
+Checked 6 modules
 
-❌ Dependency violations found:
+Dependency violations found:
 
   • features:playback -> features:library (not allowed: features cannot depend on other features)
 
-💡 Fix these violations to maintain module isolation.
+Fix these violations to maintain module isolation.
 ```
 
 ## Adding New Modules
