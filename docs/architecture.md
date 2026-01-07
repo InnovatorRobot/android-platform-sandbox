@@ -22,7 +22,7 @@ This document provides detailed architectural decisions and rationale for the An
 - Slightly more complex initial setup
 
 **Why This Is Worth It**:
-- At Spotify scale, isolation prevents cascading failures
+- At scale, isolation prevents cascading failures
 - Teams can work independently without coordination overhead
 - Features can be removed or replaced without affecting others
 
@@ -59,7 +59,7 @@ This document provides detailed architectural decisions and rationale for the An
 **Why This Is Worth It**:
 - Demonstrates real-world interoperability
 - Shows understanding of performance tradeoffs
-- Aligns with Spotify's use of native code for core logic
+- Common pattern for performance-critical applications
 
 ## Module Responsibilities
 

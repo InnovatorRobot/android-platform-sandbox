@@ -104,11 +104,11 @@ This Android Platform Sandbox project demonstrates platform engineering principl
 5. **Native Integration**: Real JNI, not just a placeholder
 6. **Testing**: Demonstrates isolated testing patterns
 
-## Alignment with Spotify Requirements
+## Alignment with Platform Engineering Principles
 
-| Requirement | Demonstrated By |
+| Principle | Demonstrated By |
 |------------|----------------|
-| SEM/isolation strategies | Strict module boundaries + dependency checker |
+| Module isolation strategies | Strict module boundaries + dependency checker |
 | Kotlin/Java ↔ C++ | Complete JNI bridge implementation |
 | Platform building blocks | Reusable foundation modules |
 | Service lifecycle | Explicit ServiceRegistry system |
@@ -158,5 +158,5 @@ This Android Platform Sandbox project demonstrates platform engineering principl
 
 ---
 
-**This project successfully demonstrates platform engineering principles suitable for a Spotify-level role.**
+**This project successfully demonstrates platform engineering principles suitable for large-scale applications.**
 

@@ -1,8 +1,6 @@
 # Android Platform Sandbox
 
-> A miniature client platform demonstrating **architecture, isolation, and developer experience** — core principles of platform engineering at Spotify.
-
-## 🎯 Project Overview
+## Project Overview
 
 This project is **not a feature app**. It's a **miniature client platform** designed to showcase:
 
@@ -13,7 +11,7 @@ This project is **not a feature app**. It's a **miniature client platform** desi
 - **Developer experience** - Fast builds, clear contracts, tooling
 - **Architectural leadership** - Strong documentation with rationale
 
-## 🏗️ Architecture
+## Architecture
 
 ### High-Level Structure
 
@@ -71,7 +69,7 @@ android-platform-sandbox/
         └─────────────┘
 ```
 
-## 🔑 Core Technical Concepts
+## Core Technical Concepts
 
 ### 1. Strict Module Isolation (SEM-style)
 
@@ -89,13 +87,13 @@ android-platform-sandbox/
 
 **Example**:
 ```kotlin
-// ✅ Allowed: Feature depends on platform
+// Allowed: Feature depends on platform
 dependencies {
     implementation(project(":platform:core"))
     implementation(project(":platform:services"))
 }
 
-// ❌ Forbidden: Feature depends on another feature
+// Forbidden: Feature depends on another feature
 dependencies {
     implementation(project(":features:playback"))  // NOT ALLOWED
 }
@@ -142,7 +140,7 @@ C++ Core (engine.cpp)
 - Explicit lifecycle management
 - Predictable initialization order
 - Easy to test (can start/stop services independently)
-- Maps to Spotify's requirement: *"Use established service systems to manage application services and their lifecycles"*
+- Maps to requirement: *"Use established service systems to manage application services and their lifecycles"*
 
 **Example**:
 ```kotlin
@@ -165,7 +163,7 @@ The `app` module:
 - Platform thinking over feature thinking
 - Easy to swap implementations
 
-## 🧪 Testing Strategy
+## Testing Strategy
 
 ### Unit Tests
 - **C++ Core**: GoogleTest for native logic (setup included)
@@ -191,7 +189,7 @@ fun `playTrack loads track and plays`() {
 }
 ```
 
-## 🛠️ Developer Experience
+## Developer Experience
 
 ### Build Performance
 - Module isolation enables parallel builds
@@ -220,7 +218,7 @@ fun `playTrack loads track and plays`() {
 | `platform:services` | `platform:core` |
 | `platform:native-bridge` | `platform:core`, `native:core-engine` |
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Android Studio Hedgehog or later
@@ -245,19 +243,19 @@ python3 tools/dependency-checker/check_dependencies.py
 ./gradlew test
 ```
 
-## 📚 Documentation
+## Documentation
 
 - [Architecture Details](docs/architecture.md)
 - [Module Rules](docs/module-rules.md)
 - [Service Lifecycle](docs/lifecycle.md)
 
-## 🎓 Why This Project Demonstrates Platform Engineering
+## Why This Project Demonstrates Platform Engineering
 
-### Direct Mapping to Spotify Requirements
+### Key Platform Engineering Principles
 
-| Spotify Requirement | How This Project Shows It |
+| Principle | How This Project Shows It |
 |---------------------|--------------------------|
-| SEM / isolation strategies | Strict module boundaries + dependency rules |
+| Module isolation strategies | Strict module boundaries + dependency rules |
 | Kotlin/Java ↔ C++ interoperability | JNI + CMake + shared C++ core |
 | Platform building blocks | Reusable "foundation" modules |
 | Service lifecycle management | Explicit service registry + lifecycle |
@@ -272,17 +270,17 @@ python3 tools/dependency-checker/check_dependencies.py
 4. **Lifecycle Management**: Explicit service system, not ad-hoc initialization
 5. **Documentation**: Thoughtful explanations of tradeoffs and decisions
 
-## 🔮 Future Extensions
+## Future Extensions
 
 - **Build Performance**: Demonstrate parallel builds and incremental compilation
 - **Multiplatform**: Show how C++ core could be shared with iOS
 - **Advanced Tooling**: More sophisticated dependency analysis
 - **Testing Infrastructure**: Comprehensive test suite with coverage
 
-## 📝 License
+## License
 
 This project is a demonstration/portfolio piece.
 
 ---
 
-**Built to demonstrate platform engineering principles at Spotify scale.**
+**Built to demonstrate platform engineering principles at scale.**

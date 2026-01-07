@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.spotify.platform.nativeengine"
+    namespace = "com.mediaplatform.nativeengine"
     compileSdk = 34
 
     defaultConfig {

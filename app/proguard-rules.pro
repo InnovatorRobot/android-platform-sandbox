@@ -8,5 +8,5 @@
 }
 
 # Keep JNI bridge classes
--keep class com.spotify.platform.nativebridge.** { *; }
+-keep class com.mediaplatform.nativebridge.** { *; }
 

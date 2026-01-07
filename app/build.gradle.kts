@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.spotify.platform.app"
+    namespace = "com.mediaplatform.app"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.spotify.platform.sandbox"
+        applicationId = "com.mediaplatform.sandbox"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

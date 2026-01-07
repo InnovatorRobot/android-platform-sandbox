@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.spotify.platform.nativebridge"
+    namespace = "com.mediaplatform.nativebridge"
     compileSdk = 34
 
     defaultConfig {
