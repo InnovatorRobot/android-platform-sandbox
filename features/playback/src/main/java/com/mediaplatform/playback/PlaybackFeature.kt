@@ -47,7 +47,7 @@ class PlaybackFeature(
         return nativeEngine.play()
     }
 
-    fun stop(): Result<Unit> {
+    fun stopPlayback(): Result<Unit> {
         return nativeEngine.stopPlayback()
     }
 
