@@ -1,0 +1,27 @@
+{
+  "buildFiles": [
+    "/home/s0001861/Workspace/SamGit/android-platform-sandbox/native/core-engine/src/main/cpp/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/usr/bin/ninja",
+      "-C",
+      "/home/s0001861/Workspace/SamGit/android-platform-sandbox/native/core-engine/.cxx/Debug/4g1v3q14/x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/usr/bin/ninja",
+    "-C",
+    "/home/s0001861/Workspace/SamGit/android-platform-sandbox/native/core-engine/.cxx/Debug/4g1v3q14/x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "core-engine::@6890427a1f51a3e7e1df": {
+      "artifactName": "core-engine",
+      "abi": "x86",
+      "output": "/home/s0001861/Workspace/SamGit/android-platform-sandbox/native/core-engine/build/intermediates/cxx/Debug/4g1v3q14/obj/x86/libcore-engine.so",
+      "runtimeFiles": []
+    }
+  }
+}

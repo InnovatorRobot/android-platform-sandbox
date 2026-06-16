@@ -1,0 +1,22 @@
+[
+    {
+        "merged": "com.mediaplatform.app-debug-31:/mipmap-anydpi_ic_launcher_round.xml.flat",
+        "source": "com.mediaplatform.app-main-33:/mipmap-anydpi/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.mediaplatform.app-debug-31:/mipmap-anydpi_ic_launcher.xml.flat",
+        "source": "com.mediaplatform.app-main-33:/mipmap-anydpi/ic_launcher.xml"
+    },
+    {
+        "merged": "com.mediaplatform.app-debug-31:/layout_activity_main.xml.flat",
+        "source": "com.mediaplatform.app-main-33:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.mediaplatform.app-debug-31:/drawable_bg_album_art.xml.flat",
+        "source": "com.mediaplatform.app-main-33:/drawable/bg_album_art.xml"
+    },
+    {
+        "merged": "com.mediaplatform.app-debug-31:/drawable_bg_track_number.xml.flat",
+        "source": "com.mediaplatform.app-main-33:/drawable/bg_track_number.xml"
+    }
+]

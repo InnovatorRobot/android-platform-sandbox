@@ -40,20 +40,35 @@ class MainActivity : AppCompatActivity() {
         serviceRegistry = ServiceRegistry()
 
         // NativeEngine requires a compiled .so; fall back to demo mode gracefully.
+        var engineRegistered = false
         try {
             val engine = NativeEngine()
             val pf = PlaybackFeature(engine)
             serviceRegistry.register(engine)
             serviceRegistry.register(pf)
             playbackFeature = pf
-            nativeEngineReady = true
+            engineRegistered = true
         } catch (e: UnsatisfiedLinkError) {
-            nativeEngineReady = false
+            // .so not available — demo mode
         }
 
         libraryFeature = LibraryFeature()
         serviceRegistry.register(libraryFeature)
-        serviceRegistry.startAll()
+
+        // startAll() calls nativeEngine.start() if registered — wrap it so any
+        // JNI / runtime error during native init is caught and falls back to demo mode.
+        try {
+            serviceRegistry.startAll()
+            nativeEngineReady = engineRegistered
+        } catch (e: Throwable) {
+            // Native engine failed at runtime — rebuild registry without it
+            nativeEngineReady = false
+            playbackFeature = null
+            serviceRegistry = ServiceRegistry()
+            libraryFeature = LibraryFeature()
+            serviceRegistry.register(libraryFeature)
+            serviceRegistry.startAll()
+        }
     }
 
     // ── Status chips ───────────────────────────────────────────────────────

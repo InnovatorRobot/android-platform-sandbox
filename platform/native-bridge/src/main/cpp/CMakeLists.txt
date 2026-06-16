@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Core engine source directory
-set(CORE_ENGINE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../../native/core-engine/src/main/cpp)
+set(CORE_ENGINE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../native/core-engine/src/main/cpp)
 
 # Include core engine source files directly
 # In a production setup, you might link to a pre-built library instead

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Background circle -->
+    <path
+        android:fillColor="#FF1A1A2E"
+        android:pathData="M0,0 L108,0 L108,108 L0,108 Z" />
+
+    <!-- Music note shape (filled white) -->
+    <!-- Note head bottom -->
+    <path
+        android:fillColor="#FF03DAC5"
+        android:pathData="M38,72 C38,66 44,62 51,62 C58,62 64,66 64,72 C64,78 58,82 51,82 C44,82 38,78 38,72 Z" />
+    <!-- Note stem -->
+    <path
+        android:fillColor="#FF03DAC5"
+        android:pathData="M60,28 L68,28 L68,74 L60,74 Z" />
+    <!-- Note flag -->
+    <path
+        android:fillColor="#FF03DAC5"
+        android:pathData="M60,28 L80,36 L80,46 L60,42 Z" />
+
+</vector>

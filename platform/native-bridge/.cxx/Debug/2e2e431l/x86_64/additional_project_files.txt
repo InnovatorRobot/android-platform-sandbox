@@ -1,0 +1,3 @@
+/home/s0001861/Workspace/SamGit/android-platform-sandbox/platform/native-bridge/src/main/cpp/jni_bridge.h
+/home/s0001861/Workspace/SamGit/android-platform-sandbox/native/core-engine/src/main/cpp/engine.h
+/home/s0001861/Workspace/SamGit/android-platform-sandbox/native/core-engine/src/main/cpp/playback_state.h

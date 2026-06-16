@@ -1,0 +1,4 @@
+/usr/bin/ninja \
+  -C \
+  /home/s0001861/Workspace/SamGit/android-platform-sandbox/platform/native-bridge/.cxx/Debug/2e2e431l/x86_64 \
+  native-bridge

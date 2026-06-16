@@ -1,0 +1,16 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /home/s0001861/Workspace/SamGit/android-platform-sandbox/platform/services/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest8431719357000004718.xml:2:13-83
+INJECTED from /home/s0001861/Workspace/SamGit/android-platform-sandbox/platform/services/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest8431719357000004718.xml:2:13-83
+	package
+		INJECTED from /home/s0001861/Workspace/SamGit/android-platform-sandbox/platform/services/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest8431719357000004718.xml
+	xmlns:android
+		ADDED from /home/s0001861/Workspace/SamGit/android-platform-sandbox/platform/services/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest8431719357000004718.xml:2:23-81
+uses-sdk
+INJECTED from /home/s0001861/Workspace/SamGit/android-platform-sandbox/platform/services/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest8431719357000004718.xml reason: use-sdk injection requested
+INJECTED from /home/s0001861/Workspace/SamGit/android-platform-sandbox/platform/services/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest8431719357000004718.xml
+INJECTED from /home/s0001861/Workspace/SamGit/android-platform-sandbox/platform/services/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest8431719357000004718.xml
+	android:targetSdkVersion
+		INJECTED from /home/s0001861/Workspace/SamGit/android-platform-sandbox/platform/services/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest8431719357000004718.xml
+	android:minSdkVersion
+		INJECTED from /home/s0001861/Workspace/SamGit/android-platform-sandbox/platform/services/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest8431719357000004718.xml
