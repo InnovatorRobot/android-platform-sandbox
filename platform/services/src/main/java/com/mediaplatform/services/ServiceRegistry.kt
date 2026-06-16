@@ -43,7 +43,13 @@ class ServiceRegistry {
      * Get a service by type. Useful for features to access platform services.
      */
     inline fun <reified T : PlatformService> getService(): T? {
-        return services.find { it is T } as? T
+        return findServiceByType(T::class.java)
+    }
+
+    @PublishedApi
+    internal fun <T : PlatformService> findServiceByType(klass: Class<T>): T? {
+        @Suppress("UNCHECKED_CAST")
+        return services.find { klass.isInstance(it) } as? T
     }
 }
 

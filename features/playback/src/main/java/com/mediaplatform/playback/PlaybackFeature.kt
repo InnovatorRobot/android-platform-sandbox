@@ -1,6 +1,7 @@
 package com.mediaplatform.playback
 
 import com.mediaplatform.core.Result
+import com.mediaplatform.core.onSuccess
 import com.mediaplatform.nativebridge.NativeEngine
 import com.mediaplatform.services.PlatformService
 import com.mediaplatform.state.StateObserver

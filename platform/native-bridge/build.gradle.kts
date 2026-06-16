@@ -51,6 +51,7 @@ android {
 
 dependencies {
     implementation(project(":platform:core"))
+    implementation(project(":platform:services"))
     implementation(project(":native:core-engine"))
 }
 

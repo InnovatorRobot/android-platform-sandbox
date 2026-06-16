@@ -25,7 +25,8 @@ dependencies {
     // Features can ONLY depend on platform modules, never on other features
     implementation(project(":platform:core"))
     implementation(project(":platform:state"))
-    
+    implementation(project(":platform:services"))
+
     // NO dependencies on :features:playback or any other feature module
 }
 

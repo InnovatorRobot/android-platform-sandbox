@@ -47,7 +47,7 @@ class PlaybackFeatureTest {
         val feature = PlaybackFeature(mockEngine)
         feature.start()
         
-        val result = feature.stop()
+        val result = feature.stopPlayback()
         
         assertTrue(result is Result.Success)
         verify(mockEngine).stopPlayback()

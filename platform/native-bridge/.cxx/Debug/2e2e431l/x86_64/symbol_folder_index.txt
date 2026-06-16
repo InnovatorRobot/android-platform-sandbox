@@ -1,0 +1,1 @@
+/home/s0001861/Workspace/SamGit/android-platform-sandbox/platform/native-bridge/build/intermediates/cxx/Debug/2e2e431l/obj/x86_64
