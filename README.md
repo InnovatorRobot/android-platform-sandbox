@@ -154,17 +154,3 @@ C++17 and STL only.
 
 See [QUICKSTART.md](QUICKSTART.md) for setup and build instructions.
 
----
-
-## Making the Case to Your Team
-
-> *"Why not just put everything in one module and call it a day?"*
-
-| Concern | This architecture |
-|---|---|
-| **Onboarding** | Each module has one job; new devs read one file to understand a feature |
-| **Build time** | Only changed modules recompile; modules are small so clean builds are fast |
-| **Testability** | `platform/core` and `platform/services` have zero Android deps — test on JVM instantly |
-| **Parallel dev** | Two teams can own `features/camera` and `features/filters` with zero merge conflicts on shared code |
-| **Performance** | C++ filter pipeline is the same approach used in production camera apps |
-| **Refactoring safety** | Strict Gradle boundaries mean `features/camera` literally cannot import `features/filters` — the compiler enforces the contract |
