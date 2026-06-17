@@ -42,18 +42,25 @@ android {
 dependencies {
     // Platform modules
     implementation(project(":platform:core"))
-    implementation(project(":platform:state"))
     implementation(project(":platform:services"))
     implementation(project(":platform:native-bridge"))
 
     // Feature modules
-    implementation(project(":features:playback"))
-    implementation(project(":features:library"))
+    implementation(project(":features:camera"))
+    implementation(project(":features:filters"))
 
     // Android dependencies
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+
+    // CameraX (needed in app for permission + PreviewView binding)
+    implementation("androidx.camera:camera-core:1.3.1")
+    implementation("androidx.camera:camera-camera2:1.3.1")
+    implementation("androidx.camera:camera-lifecycle:1.3.1")
+    implementation("androidx.camera:camera-view:1.3.1")
+    implementation("androidx.activity:activity-ktx:1.8.2")
 }
 

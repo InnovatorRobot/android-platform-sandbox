@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Platform Sandbox</string>
+    <string name="app_name">FilterLens</string>
+    <string name="permission_required">Camera permission is required to use this app.</string>
+    <string name="grant_permission">Grant Permission</string>
+    <string name="filter_fps">%d fps</string>
 </resources>
-

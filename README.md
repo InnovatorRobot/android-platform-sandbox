@@ -1,286 +1,170 @@
-# Android Platform Sandbox
+# FilterLens
 
-## Project Overview
+A real-time image filter camera app for Android that demonstrates a production-quality
+multi-module architecture with live C++ image processing via JNI.
 
-This project is **not a feature app**. It's a **miniature client platform** designed to showcase:
+## What It Does
 
-- **SEM (Service Extraction Model) / isolation strategies** - Strict module boundaries with enforced dependency rules
-- **Kotlin/Java ↔ C++ interoperability** - JNI bridge with shared C++ core
-- **Platform building blocks** - Reusable foundation modules
-- **Service lifecycle management** - Explicit service registry and lifecycle
-- **Developer experience** - Fast builds, clear contracts, tooling
-- **Architectural leadership** - Strong documentation with rationale
+FilterLens captures live camera frames and applies image filters in real time using native
+C++ convolution kernels. Tap a chip at the bottom to switch filters instantly:
 
-## Architecture
+| Filter | Description |
+|---|---|
+| Original | Raw camera feed, no processing |
+| Grayscale | BT.601 luminance-weighted conversion |
+| Blur | 3×3 box blur |
+| Sharpen | 3×3 sharpen kernel |
+| Edges | Grayscale → Laplacian edge detection |
 
-### High-Level Structure
-
-```
-android-platform-sandbox/
-│
-├── app/                       # Thin composition layer
-│   └── MainActivity.kt       # Wires features + services together
-│
-├── platform/                 # Platform building blocks
-│   ├── core/                 # Pure Kotlin utilities (no Android deps)
-│   ├── state/                # App state & flow coordination
-│   ├── services/             # Service registry & lifecycle mgmt
-│   └── native-bridge/        # JNI boundary (Kotlin ↔ C++)
-│
-├── features/                 # Isolated feature modules
-│   ├── playback/             # Playback feature (isolated)
-│   └── library/              # Library feature (isolated)
-│
-├── native/                   # Native C++ code
-│   └── core-engine/          # Pure C++ logic (platform-agnostic)
-│
-├── tools/                    # Developer tooling
-│   └── dependency-checker/   # Enforces isolation rules
-│
-└── docs/                     # Architecture documentation
-```
-
-### Architecture Diagram
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                         app/                                 │
-│  (Composition Root - wires everything together)              │
-└──────────────┬──────────────────────────────────────────────┘
-               │
-    ┌──────────┴──────────┐
-    │                     │
-┌───▼────────┐    ┌───────▼────────┐
-│  features/ │    │   platform/    │
-│            │    │                │
-│ playback   │    │ core           │
-│ library    │    │ state          │
-│            │    │ services       │
-│            │    │ native-bridge  │
-└───┬────────┘    └───────┬────────┘
-    │                     │
-    │                     │
-    └──────────┬──────────┘
-               │
-        ┌──────▼──────┐
-        │  native/    │
-        │ core-engine │
-        │  (C++)      │
-        └─────────────┘
-```
-
-## Core Technical Concepts
-
-### 1. Strict Module Isolation (SEM-style)
-
-**Rule**: Features never depend on other features. Features only depend on platform interfaces.
-
-**Enforcement**:
-- Gradle dependency constraints
-- Custom build-time checker (`tools/dependency-checker/check_dependencies.py`)
-
-**Why This Matters**:
-- Features can be **developed and tested in isolation**
-- Reduces cognitive load
-- Enables parallel development
-- Improves build times (only changed modules rebuild)
-
-**Example**:
-```kotlin
-// Allowed: Feature depends on platform
-dependencies {
-    implementation(project(":platform:core"))
-    implementation(project(":platform:services"))
-}
-
-// Forbidden: Feature depends on another feature
-dependencies {
-    implementation(project(":features:playback"))  // NOT ALLOWED
-}
-```
-
-### 2. Kotlin ↔ C++ Interoperability
-
-**Architecture**:
-- **C++ Core** (`native/core-engine/`): Platform-agnostic playback logic
-  - Thread-safe state machine
-  - No Android dependencies
-  - Could be shared with iOS
-  
-- **JNI Bridge** (`platform/native-bridge/`): Clean boundary layer
-  - Type-safe conversions
-  - Lifecycle management
-  - Callback mechanism
-
-**Why C++ for Core Logic**:
-- Performance-critical operations
-- Platform-agnostic (could be shared with iOS)
-- Thread safety at the native level
-- Clear separation of concerns
-
-**Example Flow**:
-```
-Kotlin (PlaybackFeature)
-    ↓
-JNI Bridge (NativeEngine.kt)
-    ↓
-JNI (jni_bridge.cpp)
-    ↓
-C++ Core (engine.cpp)
-```
-
-### 3. Service Lifecycle System
-
-**Design**:
-- `PlatformService` interface with explicit `start()` and `stop()` methods
-- `ServiceRegistry` manages all services
-- Services started in registration order, stopped in reverse
-
-**Why This Matters**:
-- Explicit lifecycle management
-- Predictable initialization order
-- Easy to test (can start/stop services independently)
-- Maps to requirement: *"Use established service systems to manage application services and their lifecycles"*
-
-**Example**:
-```kotlin
-val registry = ServiceRegistry()
-registry.register(NativeEngine())
-registry.register(PlaybackFeature(engine))
-registry.startAll()  // All services initialized
-```
-
-### 4. Composable App Assembly
-
-The `app` module:
-- Knows **nothing** about implementation details
-- Wires features + platform services together
-- Acts as a **composition root**
-
-**Why This Matters**:
-- Clean architecture
-- Dependency inversion
-- Platform thinking over feature thinking
-- Easy to swap implementations
-
-## Testing Strategy
-
-### Unit Tests
-- **C++ Core**: GoogleTest for native logic (setup included)
-- **Platform Modules**: JVM tests for Kotlin code
-- **Features**: Isolated tests with fake services
-
-### Test Utilities
-- Fake implementations of `PlatformService`
-- Mock `NativeEngine` for feature tests
-- State verification helpers
-
-**Example Test**:
-```kotlin
-@Test
-fun `playTrack loads track and plays`() {
-    val mockEngine = mock(NativeEngine::class.java)
-    val feature = PlaybackFeature(mockEngine)
-    
-    feature.playTrack("track1")
-    
-    verify(mockEngine).loadTrack("track1")
-    verify(mockEngine).play()
-}
-```
-
-## Developer Experience
-
-### Build Performance
-- Module isolation enables parallel builds
-- Only changed modules rebuild
-- Native code isolated reduces rebuild scope
-
-### Tooling
-- **Dependency Checker**: Fails build if isolation rules violated
-  ```bash
-  ./gradlew checkDependencies
-  ```
-
-### Clear Contracts
-- Platform interfaces define clear boundaries
-- Features depend on interfaces, not implementations
-- Easy to understand module responsibilities
-
-## Module Dependency Rules
-
-| Module | Can Depend On |
-|--------|---------------|
-| `app` | All platform modules, all features |
-| `features:*` | Platform modules only (never other features) |
-| `platform:core` | Nothing (pure utilities) |
-| `platform:state` | `platform:core` |
-| `platform:services` | `platform:core` |
-| `platform:native-bridge` | `platform:core`, `native:core-engine` |
-
-## Getting Started
-
-### Prerequisites
-- Android Studio Hedgehog or later
-- Android SDK 24+
-- CMake 3.22.1+
-- Python 3 (for dependency checker)
-
-### Build
-```bash
-./gradlew build
-```
-
-### Run Dependency Checker
-```bash
-./gradlew checkDependencies
-# or
-python3 tools/dependency-checker/check_dependencies.py
-```
-
-### Run Tests
-```bash
-./gradlew test
-```
-
-## Documentation
-
-- [Architecture Details](docs/architecture.md)
-- [Module Rules](docs/module-rules.md)
-- [Service Lifecycle](docs/lifecycle.md)
-
-## Why This Project Demonstrates Platform Engineering
-
-### Key Platform Engineering Principles
-
-| Principle | How This Project Shows It |
-|---------------------|--------------------------|
-| Module isolation strategies | Strict module boundaries + dependency rules |
-| Kotlin/Java ↔ C++ interoperability | JNI + CMake + shared C++ core |
-| Platform building blocks | Reusable "foundation" modules |
-| Service lifecycle management | Explicit service registry + lifecycle |
-| Developer experience | Fast builds, clear contracts, tooling |
-| Architectural leadership | Strong README + diagrams + rationale |
-
-### Key Differentiators
-
-1. **Isolation First**: Features are truly isolated, not just separated
-2. **Tooling**: Build-time enforcement of architectural rules
-3. **Native Integration**: Real JNI implementation, not just a stub
-4. **Lifecycle Management**: Explicit service system, not ad-hoc initialization
-5. **Documentation**: Thoughtful explanations of tradeoffs and decisions
-
-## Future Extensions
-
-- **Build Performance**: Demonstrate parallel builds and incremental compilation
-- **Multiplatform**: Show how C++ core could be shared with iOS
-- **Advanced Tooling**: More sophisticated dependency analysis
-- **Testing Infrastructure**: Comprehensive test suite with coverage
-
-## License
-
-This project is a demonstration/portfolio piece.
+An FPS counter in the top-right corner shows processing throughput.
 
 ---
 
-**Built to demonstrate platform engineering principles at scale.**
+## Why This Architecture?
+
+### The Problem With Monolithic Android Apps
+
+As a codebase grows, a monolith develops:
+
+- Features accidentally depend on each other — tightly coupled code
+- Any change can break unrelated modules — slow iteration
+- JVM-based pixel processing at 15 fps on 640×480 frames drops frames constantly
+- No enforced contract between layers — spaghetti over time
+
+### The Solution: Strict Module Isolation + Native Processing
+
+```
+app/                  ← thin composition root; wires all modules together
+
+platform/
+  core/               ← pure Kotlin utilities, zero Android deps
+  services/           ← service registry & lifecycle management
+  native-bridge/      ← JNI boundary (Kotlin ↔ C++)
+
+features/
+  camera/             ← CameraX frame capture only
+  filters/            ← filter state only
+
+native/
+  core-engine/        ← pure C++ convolution kernels
+```
+
+**The rule**: features never depend on other features. Features only depend on platform
+modules. This is enforced at Gradle level.
+
+### Why C++ for the Filters?
+
+Each camera frame is 640×480 = ~307,000 pixels. A 3×3 convolution kernel applies
+9 multiply-add operations per pixel. At 15 fps that is ~41M operations/sec per filter pass.
+The JVM cannot sustain this without dropped frames; C++ runs each pass in microseconds.
+
+---
+
+## Architecture
+
+```
+┌──────────────────────────────────────────┐
+│                  app/                    │
+│   camera permission · chip UI · FPS      │
+└──────────────┬───────────────────────────┘
+               │
+    ┌──────────┴──────────┐
+    │                     │
+features/camera     features/filters
+CameraX pipeline    FilterType enum
+YUV → Bitmap        current filter state
+    │                     │
+    └──────────┬──────────┘
+               │
+    ┌──────────▼───────────────────┐
+    │          platform/           │
+    │  core · services             │
+    │  native-bridge (JNI)         │
+    └──────────┬───────────────────┘
+               │
+    ┌──────────▼──────────┐
+    │      native/        │
+    │    core-engine      │
+    │   (C++ kernels)     │
+    └─────────────────────┘
+```
+
+---
+
+## Module Reference
+
+### `platform/core`
+
+Pure Kotlin. `Result<T>` sealed class (`Success` / `Error`) with `map`, `onSuccess`,
+`onError` extensions. Zero Android dependencies — usable in any JVM project.
+
+### `platform/services`
+
+`PlatformService` interface (`start`, `stop`, `dispose`) and `ServiceRegistry` that manages
+ordered start and stop of all services with a single call each.
+
+### `platform/native-bridge`
+
+`ImageProcessorEngine` wraps the C++ filter engine via JNI. It allocates and frees the
+native object, copies ARGB pixel arrays across the JNI boundary, and returns a filtered
+`Bitmap` for each frame.
+
+### `features/camera`
+
+Uses CameraX `ImageAnalysis` to subscribe to YUV_420_888 frames, converts each to an
+ARGB_8888 `Bitmap`, corrects rotation, and delivers frames via an `onFrameAvailable`
+callback. Target resolution: 640×480.
+
+### `features/filters`
+
+`FilterType` enum (maps to C++ int IDs 0–4) and `FiltersFeature` holding the currently
+selected filter. The app layer reads `currentFilter` before each frame is processed.
+
+### `native/core-engine`
+
+C++ `ImageFilter` class with five filter implementations using 3×3 convolution kernels.
+Operates in-place on `int32_t` ARGB pixel arrays. No Android or JNI dependencies — pure
+C++17 and STL only.
+
+| ID | Filter | Kernel |
+|---|---|---|
+| 0 | None | pass-through |
+| 1 | Grayscale | BT.601 weights (299/587/114) |
+| 2 | Blur | 3×3 box (all 1/9) |
+| 3 | Sharpen | `[0,-1,0,-1,5,-1,0,-1,0]` |
+| 4 | Edge Detect | grayscale → Laplacian `[-1,-1,-1,-1,8,-1,-1,-1,-1]` |
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Language | Kotlin (JVM 17) + C++17 |
+| Camera | CameraX 1.3.1 (`ImageAnalysis`) |
+| NDK | NDK 27.0.12077973 |
+| Build system | CMake 3.22.1, Gradle 8.13 |
+| UI | ViewBinding, Material Components 1.11.0 |
+| Min SDK | 24 (Android 7.0) |
+| Target SDK | 34 |
+
+---
+
+## Running the App
+
+See [QUICKSTART.md](QUICKSTART.md) for setup and build instructions.
+
+---
+
+## Making the Case to Your Team
+
+> *"Why not just put everything in one module and call it a day?"*
+
+| Concern | This architecture |
+|---|---|
+| **Onboarding** | Each module has one job; new devs read one file to understand a feature |
+| **Build time** | Only changed modules recompile; modules are small so clean builds are fast |
+| **Testability** | `platform/core` and `platform/services` have zero Android deps — test on JVM instantly |
+| **Parallel dev** | Two teams can own `features/camera` and `features/filters` with zero merge conflicts on shared code |
+| **Performance** | C++ filter pipeline is the same approach used in production camera apps |
+| **Refactoring safety** | Strict Gradle boundaries mean `features/camera` literally cannot import `features/filters` — the compiler enforces the contract |

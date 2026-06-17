@@ -1,179 +1,125 @@
-# Quick Start Guide
+# Quick Start
 
 ## Prerequisites
 
-- Android Studio Hedgehog (2023.1.1) or later
-- Android SDK 24+
-- CMake 3.22.1+ (usually bundled with Android Studio)
-- Python 3 (for dependency checker)
-- JDK 17+
+| Requirement | Minimum version |
+|---|---|
+| Android Studio | Hedgehog 2023.1.1 (Iguana or Jellyfish recommended) |
+| Android SDK | API 24+ |
+| NDK | 27.0.12077973 |
+| CMake | 3.22.1+ |
+| JDK | 17+ |
 
-## Setup
+Install NDK and CMake via **Android Studio → Settings → SDK Manager → SDK Tools**.
 
-1. **Open in Android Studio**
-   ```bash
-   # Open the project
-   android-studio android-platform-sandbox
-   ```
+---
 
-2. **Sync Gradle**
-   - Android Studio should automatically sync
-   - Or: `File > Sync Project with Gradle Files`
+## 1. Open the Project
 
-3. **Verify Setup**
-   ```bash
-   # Run dependency checker
-   ./gradlew checkDependencies
-   
-   # Build the project
-   ./gradlew build
-   ```
+Open the `android-platform-sandbox` folder in Android Studio.
+Let the initial Gradle sync complete.
 
-## Running the App
+---
 
-1. **Connect Device or Start Emulator**
-   - Minimum API level: 24 (Android 7.0)
+## 2. Connect a Device or Start an Emulator
 
-2. **Run**
-   - Click the Run button in Android Studio
-   - Or: `./gradlew installDebug`
+- **Physical device**: enable USB debugging, connect via USB.
+- **Emulator**: create an AVD with API 24+. For a live camera feed, configure
+  the AVD with "Webcam" or "Virtual scene" camera in Extended Controls.
 
-## Running Tests
+> Camera permission is requested at runtime on first launch.
+
+---
+
+## 3. Run
+
+Click **Run ▶** in Android Studio, or from a terminal:
 
 ```bash
-# Run all tests
+cd gradle
+./gradlew :app:installDebug
+```
+
+> Note: the Gradle wrapper (`gradlew`) lives in the `gradle/` subdirectory,
+> not the project root.
+
+---
+
+## 4. Using the App
+
+1. Grant camera permission when prompted.
+2. The live camera feed fills the screen.
+3. Tap a chip at the bottom to switch filters:
+
+   | Chip | Effect |
+   |---|---|
+   | Original | Raw camera feed |
+   | Grayscale | BT.601 luminance conversion |
+   | Blur | 3×3 box blur |
+   | Sharpen | 3×3 sharpen kernel |
+   | Edges | Laplacian edge detection |
+
+4. The FPS counter (top-right) shows frame processing throughput.
+
+---
+
+## 5. Build & Test from Terminal
+
+```bash
+cd gradle
+
+# Debug APK
+./gradlew assembleDebug
+
+# Run all unit tests
 ./gradlew test
 
-# Run tests for specific module
+# Run tests for a specific module
 ./gradlew :platform:core:test
 ./gradlew :platform:services:test
-./gradlew :features:playback:test
+
+# Clean build outputs
+./gradlew clean
 ```
 
-## Verifying Architecture
+---
 
-### Check Module Isolation
-
-```bash
-# Run dependency checker
-./gradlew checkDependencies
-
-# Or directly
-python3 tools/dependency-checker/check_dependencies.py
-```
-
-### Expected Output
-
-```
-🔍 Checking module dependencies...
-Project root: /path/to/android-platform-sandbox
-
-✅ Checked 6 modules
-
-✅ All dependencies are valid!
-
-📋 Module isolation rules:
-  • Features never depend on other features
-  • Features only depend on platform modules
-  • Platform modules follow strict dependency rules
-```
-
-## Project Structure Overview
+## 6. Project Layout
 
 ```
 android-platform-sandbox/
-├── app/                    # Composition root
-├── platform/               # Platform building blocks
-│   ├── core/              # Pure Kotlin utilities
-│   ├── state/             # State management
-│   ├── services/          # Service lifecycle
-│   └── native-bridge/     # JNI layer
-├── features/              # Isolated features
-│   ├── playback/          # Playback feature
-│   └── library/           # Library feature
-├── native/                # C++ core
-│   └── core-engine/       # Platform-agnostic C++
-├── tools/                 # Developer tooling
-│   └── dependency-checker/
-└── docs/                  # Architecture docs
+├── app/                     # Composition root (MainActivity)
+├── features/
+│   ├── camera/              # CameraX frame capture & delivery
+│   └── filters/             # FilterType enum & active filter state
+├── platform/
+│   ├── core/                # Result<T>, pure Kotlin (no Android deps)
+│   ├── services/            # ServiceRegistry & PlatformService interface
+│   └── native-bridge/       # JNI wrapper (Kotlin + C++)
+├── native/
+│   └── core-engine/         # C++ convolution kernels
+├── gradle/                  # Gradle wrapper (gradlew lives here)
+└── docs/                    # Architecture documentation
 ```
 
-## Key Files to Explore
+---
 
-### Architecture
-- `README.md` - Project overview and architecture
-- `docs/architecture.md` - Detailed architecture decisions
-- `docs/module-rules.md` - Dependency rules
-- `docs/lifecycle.md` - Service lifecycle system
+## 7. Troubleshooting
 
-### Code Examples
-- `app/src/main/java/.../MainActivity.kt` - Composition root
-- `platform/services/ServiceRegistry.kt` - Service lifecycle
-- `platform/native-bridge/NativeEngine.kt` - JNI bridge
-- `native/core-engine/engine.cpp` - C++ core logic
-- `features/playback/PlaybackFeature.kt` - Isolated feature
+**NDK not found / CMake error**
+Install NDK 27.0.12077973 and CMake 3.22.1 via SDK Manager → SDK Tools.
+Then in `gradle.properties` / `local.properties` confirm `ndk.dir` if needed.
 
-### Tooling
-- `tools/dependency-checker/check_dependencies.py` - Isolation enforcer
+**Camera permission denied**
+Settings → Apps → FilterLens → Permissions → Camera → Allow.
 
-## Common Tasks
+**No camera preview on emulator**
+In Android Studio's Device Manager, edit the AVD and set Front/Back camera
+to "Webcam0" or "Virtual scene", then cold-boot the emulator.
 
-### Add a New Feature Module
+**Build fails with `JniBridge` errors or duplicate class errors**
+Build → Clean Project, then rebuild. These errors indicate stale cached
+artifacts from a previous build.
 
-1. Create module directory: `features/myfeature/`
-2. Add to `settings.gradle.kts`:
-   ```kotlin
-   include(":features:myfeature")
-   ```
-3. Create `build.gradle.kts` with platform dependencies only
-4. Update dependency checker rules
-5. Register in `MainActivity.kt`
-
-### Add a New Platform Module
-
-1. Create module directory: `platform/mymodule/`
-2. Add to `settings.gradle.kts`
-3. Create `build.gradle.kts` following dependency rules
-4. Update dependency checker rules
-
-### Modify Native Code
-
-1. Edit C++ files in `native/core-engine/src/main/cpp/`
-2. Edit JNI bridge in `platform/native-bridge/src/main/cpp/`
-3. Rebuild: `./gradlew :platform:native-bridge:assemble`
-
-## Troubleshooting
-
-### Build Fails
-
-- **CMake not found**: Install CMake via Android Studio SDK Manager
-- **Native compilation errors**: Check C++ standard (C++17 required)
-- **JNI errors**: Verify method signatures match between Kotlin and C++
-
-### Dependency Checker Fails
-
-- Review error message for specific violation
-- Check `build.gradle.kts` files for forbidden dependencies
-- Update `tools/dependency-checker/check_dependencies.py` if adding new modules
-
-### Tests Fail
-
-- Ensure Mockito is available for feature tests
-- Check that test dependencies are in `build.gradle.kts`
-- Verify test classes are in `src/test/` directory
-
-## Next Steps
-
-1. Read `README.md` for project overview
-2. Explore `docs/` for architecture details
-3. Review code examples in platform and feature modules
-4. Run tests to see testing patterns
-5. Try adding a new feature module following isolation rules
-
-## Resources
-
-- [Android NDK Documentation](https://developer.android.com/ndk)
-- [JNI Specification](https://docs.oracle.com/javase/8/docs/technotes/guides/jni/)
-- [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html)
-- [CMake Documentation](https://cmake.org/documentation/)
-
+**`gradlew: command not found` from project root**
+The wrapper is at `gradle/gradlew`. Run `cd gradle && ./gradlew ...`.

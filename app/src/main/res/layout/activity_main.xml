@@ -1,723 +1,178 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/surface_light">
+    android:background="@color/frame_bg">
 
-    <!-- Fixed top bar, collapses with content scroll -->
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/header_bg">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/header_bg"
-            app:title="MediaPlatform"
-            app:titleTextColor="@color/white" />
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.core.widget.NestedScrollView
+    <!-- ── Live filtered frame ───────────────────────────────────────────── -->
+    <ImageView
+        android:id="@+id/frameView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:scaleType="centerCrop"
+        android:background="@color/frame_bg"
+        android:contentDescription="Camera preview" />
 
-        <LinearLayout
+    <!-- ── Top bar ────────────────────────────────────────────────────────── -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="48dp"
+        android:paddingBottom="12dp"
+        android:background="#88000000">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="CamFilters"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/fpsText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="13sp"
+            android:textColor="@color/teal_200" />
+
+    </LinearLayout>
+
+    <!-- ── Bottom controls ───────────────────────────────────────────────── -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        android:background="@color/overlay_bg"
+        android:paddingTop="16dp"
+        android:paddingBottom="32dp">
+
+        <!-- Filter chip row -->
+        <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:scrollbars="none"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="12dp">
 
-            <!-- ── Hero section ─────────────────────────────────────────── -->
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="160dp"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:background="@color/header_bg">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="♫"
-                    android:textSize="48sp"
-                    android:textColor="@color/teal_200" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="MediaPlatform"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/white"
-                    android:layout_marginTop="4dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Modular Audio Platform"
-                    android:textSize="13sp"
-                    android:textColor="#AAFFFFFF"
-                    android:layout_marginTop="2dp" />
-
-            </LinearLayout>
-
-            <!-- ── Scrollable content ─────────────────────────────────── -->
-            <LinearLayout
-                android:layout_width="match_parent"
+                android:id="@+id/chipRow"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
-                <!-- Status chips row -->
-                <HorizontalScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:scrollbars="none"
-                    android:layout_marginBottom="20dp">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chipNativeEngine"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="● Native Engine"
-                            android:clickable="false"
-                            android:focusable="false"
-                            android:layout_marginEnd="8dp" />
-
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chipServices"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="3 Services Registered"
-                            android:clickable="false"
-                            android:focusable="false"
-                            app:chipBackgroundColor="@color/purple_700"
-                            android:layout_marginEnd="8dp" />
-
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chipIsolation"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="✓ Isolation: Enforced"
-                            android:clickable="false"
-                            android:focusable="false"
-                            app:chipBackgroundColor="@color/teal_700" />
-
-                    </LinearLayout>
-                </HorizontalScrollView>
-
-                <!-- ── Section: NOW PLAYING ──────────────────────────── -->
-                <TextView
+                <!-- Original -->
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipNone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="NOW PLAYING"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:letterSpacing="0.12"
-                    android:textColor="@color/text_secondary"
-                    android:layout_marginBottom="8dp" />
+                    android:text="Original"
+                    android:layout_marginEnd="8dp"
+                    app:chipBackgroundColor="@color/chip_selected_bg"
+                    android:textColor="@color/chip_text_selected" />
 
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="24dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="4dp"
-                    app:cardBackgroundColor="@color/white">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="20dp">
-
-                        <!-- Album art + track info + state badge -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginBottom="16dp">
-
-                            <FrameLayout
-                                android:layout_width="64dp"
-                                android:layout_height="64dp"
-                                android:layout_marginEnd="16dp"
-                                android:background="@drawable/bg_album_art">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:text="♫"
-                                    android:textSize="28sp"
-                                    android:textColor="@color/white" />
-
-                            </FrameLayout>
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:id="@+id/nowPlayingTitle"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="No track selected"
-                                    android:textSize="17sp"
-                                    android:textStyle="bold"
-                                    android:textColor="@color/black" />
-
-                                <TextView
-                                    android:id="@+id/nowPlayingArtist"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Tap a track below to start"
-                                    android:textSize="13sp"
-                                    android:textColor="@color/text_secondary"
-                                    android:layout_marginTop="4dp" />
-
-                            </LinearLayout>
-
-                            <com.google.android.material.chip.Chip
-                                android:id="@+id/chipPlaybackState"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Idle"
-                                android:clickable="false"
-                                android:focusable="false"
-                                app:chipBackgroundColor="@color/chip_idle_bg" />
-
-                        </LinearLayout>
-
-                        <!-- Thin divider -->
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="@color/track_divider"
-                            android:layout_marginBottom="16dp" />
-
-                        <!-- Playback controls -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-
-                            <com.google.android.material.button.MaterialButton
-                                android:id="@+id/btnPlay"
-                                android:layout_width="0dp"
-                                android:layout_weight="1"
-                                android:layout_height="wrap_content"
-                                android:text="▶  Play"
-                                android:layout_marginEnd="6dp"
-                                app:cornerRadius="24dp"
-                                style="@style/Widget.MaterialComponents.Button" />
-
-                            <com.google.android.material.button.MaterialButton
-                                android:id="@+id/btnPause"
-                                android:layout_width="0dp"
-                                android:layout_weight="1"
-                                android:layout_height="wrap_content"
-                                android:text="⏸  Pause"
-                                android:layout_marginEnd="6dp"
-                                app:cornerRadius="24dp"
-                                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
-
-                            <com.google.android.material.button.MaterialButton
-                                android:id="@+id/btnStop"
-                                android:layout_width="0dp"
-                                android:layout_weight="1"
-                                android:layout_height="wrap_content"
-                                android:text="■  Stop"
-                                app:cornerRadius="24dp"
-                                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- ── Section: YOUR LIBRARY ─────────────────────────── -->
-                <TextView
+                <!-- Grayscale -->
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipGrayscale"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="YOUR LIBRARY"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:letterSpacing="0.12"
-                    android:textColor="@color/text_secondary"
-                    android:layout_marginBottom="8dp" />
+                    android:text="Grayscale"
+                    android:layout_marginEnd="8dp"
+                    app:chipBackgroundColor="@color/chip_unselected_bg"
+                    android:textColor="@color/chip_text_unselected" />
 
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="24dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="4dp"
-                    app:cardBackgroundColor="@color/white">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <!-- Track 1 -->
-                        <LinearLayout
-                            android:id="@+id/trackRow1"
-                            android:layout_width="match_parent"
-                            android:layout_height="68dp"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="16dp"
-                            android:background="?attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:focusable="true">
-
-                            <TextView
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                android:text="1"
-                                android:textSize="14sp"
-                                android:textColor="@color/white"
-                                android:textStyle="bold"
-                                android:gravity="center"
-                                android:background="@drawable/bg_track_number"
-                                android:layout_marginEnd="14dp" />
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:id="@+id/track1Title"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Song 1"
-                                    android:textSize="15sp"
-                                    android:textStyle="bold"
-                                    android:textColor="@color/black" />
-
-                                <TextView
-                                    android:id="@+id/track1Artist"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Artist 1"
-                                    android:textSize="12sp"
-                                    android:textColor="@color/text_secondary" />
-
-                            </LinearLayout>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="▶"
-                                android:textSize="16sp"
-                                android:textColor="@color/purple_500" />
-
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="@color/track_divider"
-                            android:layout_marginStart="70dp" />
-
-                        <!-- Track 2 -->
-                        <LinearLayout
-                            android:id="@+id/trackRow2"
-                            android:layout_width="match_parent"
-                            android:layout_height="68dp"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="16dp"
-                            android:background="?attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:focusable="true">
-
-                            <TextView
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                android:text="2"
-                                android:textSize="14sp"
-                                android:textColor="@color/white"
-                                android:textStyle="bold"
-                                android:gravity="center"
-                                android:background="@drawable/bg_track_number"
-                                android:layout_marginEnd="14dp" />
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:id="@+id/track2Title"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Song 2"
-                                    android:textSize="15sp"
-                                    android:textStyle="bold"
-                                    android:textColor="@color/black" />
-
-                                <TextView
-                                    android:id="@+id/track2Artist"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Artist 2"
-                                    android:textSize="12sp"
-                                    android:textColor="@color/text_secondary" />
-
-                            </LinearLayout>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="▶"
-                                android:textSize="16sp"
-                                android:textColor="@color/purple_500" />
-
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="@color/track_divider"
-                            android:layout_marginStart="70dp" />
-
-                        <!-- Track 3 -->
-                        <LinearLayout
-                            android:id="@+id/trackRow3"
-                            android:layout_width="match_parent"
-                            android:layout_height="68dp"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="16dp"
-                            android:background="?attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:focusable="true">
-
-                            <TextView
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                android:text="3"
-                                android:textSize="14sp"
-                                android:textColor="@color/white"
-                                android:textStyle="bold"
-                                android:gravity="center"
-                                android:background="@drawable/bg_track_number"
-                                android:layout_marginEnd="14dp" />
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:id="@+id/track3Title"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Song 3"
-                                    android:textSize="15sp"
-                                    android:textStyle="bold"
-                                    android:textColor="@color/black" />
-
-                                <TextView
-                                    android:id="@+id/track3Artist"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Artist 3"
-                                    android:textSize="12sp"
-                                    android:textColor="@color/text_secondary" />
-
-                            </LinearLayout>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="▶"
-                                android:textSize="16sp"
-                                android:textColor="@color/purple_500" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- ── Section: PLATFORM MODULES ─────────────────────── -->
-                <TextView
+                <!-- Blur -->
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipBlur"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="PLATFORM MODULES"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:letterSpacing="0.12"
-                    android:textColor="@color/text_secondary"
-                    android:layout_marginBottom="8dp" />
+                    android:text="Blur"
+                    android:layout_marginEnd="8dp"
+                    app:chipBackgroundColor="@color/chip_unselected_bg"
+                    android:textColor="@color/chip_text_unselected" />
 
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
+                <!-- Sharpen -->
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipSharpen"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="32dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="4dp"
-                    app:cardBackgroundColor="@color/white">
+                    android:text="Sharpen"
+                    android:layout_marginEnd="8dp"
+                    app:chipBackgroundColor="@color/chip_unselected_bg"
+                    android:textColor="@color/chip_text_unselected" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="8dp">
-
-                        <!-- platform:core -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:padding="12dp">
-
-                            <View
-                                android:layout_width="10dp"
-                                android:layout_height="10dp"
-                                android:background="@drawable/bg_track_number"
-                                android:layout_marginEnd="14dp" />
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="platform:core"
-                                    android:textSize="13sp"
-                                    android:textStyle="bold"
-                                    android:textColor="@color/black" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Pure Kotlin utilities · Result · Disposable"
-                                    android:textSize="11sp"
-                                    android:textColor="@color/text_secondary" />
-
-                            </LinearLayout>
-
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="@color/track_divider"
-                            android:layout_marginStart="36dp" />
-
-                        <!-- platform:services -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:padding="12dp">
-
-                            <View
-                                android:layout_width="10dp"
-                                android:layout_height="10dp"
-                                android:background="@drawable/bg_track_number"
-                                android:layout_marginEnd="14dp" />
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="platform:services"
-                                    android:textSize="13sp"
-                                    android:textStyle="bold"
-                                    android:textColor="@color/black" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Service lifecycle · ServiceRegistry · ordered start/stop"
-                                    android:textSize="11sp"
-                                    android:textColor="@color/text_secondary" />
-
-                            </LinearLayout>
-
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="@color/track_divider"
-                            android:layout_marginStart="36dp" />
-
-                        <!-- platform:native-bridge -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:padding="12dp">
-
-                            <View
-                                android:layout_width="10dp"
-                                android:layout_height="10dp"
-                                android:background="@drawable/bg_album_art"
-                                android:layout_marginEnd="14dp" />
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="platform:native-bridge"
-                                    android:textSize="13sp"
-                                    android:textStyle="bold"
-                                    android:textColor="@color/black" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="JNI boundary · Kotlin ↔ C++ · NativeEngine"
-                                    android:textSize="11sp"
-                                    android:textColor="@color/text_secondary" />
-
-                            </LinearLayout>
-
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="@color/track_divider"
-                            android:layout_marginStart="36dp" />
-
-                        <!-- features:playback -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:padding="12dp">
-
-                            <View
-                                android:layout_width="10dp"
-                                android:layout_height="10dp"
-                                android:background="@drawable/bg_album_art"
-                                android:layout_marginEnd="14dp" />
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="features:playback"
-                                    android:textSize="13sp"
-                                    android:textStyle="bold"
-                                    android:textColor="@color/black" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Isolated feature · play · pause · stop · state"
-                                    android:textSize="11sp"
-                                    android:textColor="@color/text_secondary" />
-
-                            </LinearLayout>
-
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="@color/track_divider"
-                            android:layout_marginStart="36dp" />
-
-                        <!-- features:library -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:padding="12dp">
-
-                            <View
-                                android:layout_width="10dp"
-                                android:layout_height="10dp"
-                                android:background="@drawable/bg_album_art"
-                                android:layout_marginEnd="14dp" />
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="features:library"
-                                    android:textSize="13sp"
-                                    android:textStyle="bold"
-                                    android:textColor="@color/black" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Isolated feature · track list · selection"
-                                    android:textSize="11sp"
-                                    android:textColor="@color/text_secondary" />
-
-                            </LinearLayout>
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                </com.google.android.material.card.MaterialCardView>
+                <!-- Edges -->
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipEdges"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Edges"
+                    app:chipBackgroundColor="@color/chip_unselected_bg"
+                    android:textColor="@color/chip_text_unselected" />
 
             </LinearLayout>
 
-        </LinearLayout>
+        </HorizontalScrollView>
 
-    </androidx.core.widget.NestedScrollView>
+        <!-- Active filter label -->
+        <TextView
+            android:id="@+id/activeFilterLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Filter: Original"
+            android:textSize="12sp"
+            android:textColor="@color/status_text"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </LinearLayout>
+
+    <!-- ── No-permission overlay (hidden by default) ─────────────────────── -->
+    <LinearLayout
+        android:id="@+id/permissionLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@color/permission_bg"
+        android:padding="32dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📷"
+            android:textSize="64sp"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/permission_required"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:layout_marginBottom="24dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGrantPermission"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/grant_permission"
+            app:cornerRadius="24dp" />
+
+    </LinearLayout>
+
+</FrameLayout>
+

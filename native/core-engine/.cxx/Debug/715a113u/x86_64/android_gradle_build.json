@@ -21,8 +21,7 @@
       "toolchain": "toolchain",
       "abi": "x86_64",
       "artifactName": "core-engine",
-      "output": "/home/s0001861/Workspace/SamGit/android-platform-sandbox/native/core-engine/build/intermediates/cxx/Debug/715a113u/obj/x86_64/libcore-engine.so",
-      "runtimeFiles": []
+      "output": "/home/s0001861/Workspace/SamGit/android-platform-sandbox/native/core-engine/.cxx/Debug/715a113u/x86_64/libcore-engine.a"
     }
   },
   "toolchains": {
