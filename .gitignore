@@ -1,0 +1,123 @@
+# ==========================================
+# Kotlin / Gradle
+# ==========================================
+
+.gradle/
+build/
+out/
+
+# Kotlin compiled files
+*.class
+*.jar
+*.war
+*.ear
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Kotlin Multiplatform
+.kotlin/
+
+# Logs
+*.log
+
+# ==========================================
+# C++ Build Artifacts
+# ==========================================
+
+# Object files
+*.o
+*.obj
+*.lo
+*.slo
+
+# Libraries
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Debug files
+*.pdb
+*.idb
+
+# ==========================================
+# CMake
+# ==========================================
+
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+CTestTestfile.cmake
+Makefile
+install_manifest.txt
+Testing/
+
+# CMake build directories
+cmake-build-*/
+build/
+.cxx/
+
+# ==========================================
+# Make
+# ==========================================
+
+*.d
+.dep/
+
+# ==========================================
+# Visual Studio
+# ==========================================
+
+.vs/
+*.vcxproj.user
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# ==========================================
+# CLion
+# ==========================================
+
+.idea/
+cmake-build-*/
+
+# ==========================================
+# VS Code
+# ==========================================
+
+.vscode/
+
+# ==========================================
+# OS Files
+# ==========================================
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# ==========================================
+# Environment / Secrets
+# ==========================================
+
+.env
+.env.*
+*.key
+*.pem
+secrets/
+
