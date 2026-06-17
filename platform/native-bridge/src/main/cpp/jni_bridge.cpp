@@ -25,31 +25,24 @@ Java_com_mediaplatform_nativebridge_ImageProcessorEngine_nativeDestroy(
   delete reinterpret_cast<image_filter::ImageFilter *>(ptr);
 }
 
-JNIEXPORT jintArray JNICALL
+JNIEXPORT void JNICALL
 Java_com_mediaplatform_nativebridge_ImageProcessorEngine_nativeApplyFilter(
     JNIEnv *env, jobject /*thiz*/, jlong ptr, jintArray pixels, jint width,
     jint height, jint filterType) {
 
   auto *filter = reinterpret_cast<image_filter::ImageFilter *>(ptr);
-  const jsize count = width * height;
 
-  jintArray result = env->NewIntArray(count);
-  if (result == nullptr) {
-    LOGE("Failed to allocate output array (%dx%d)", width, height);
-    return nullptr;
+  // Operate directly on the caller's array (mode 0 commits changes back),
+  // avoiding a second large allocation and copy every frame.
+  jint *data = env->GetIntArrayElements(pixels, nullptr);
+  if (data == nullptr) {
+    LOGE("Failed to access pixel array (%dx%d)", width, height);
+    return;
   }
-
-  jint *srcData = env->GetIntArrayElements(pixels, nullptr);
-  env->SetIntArrayRegion(result, 0, count, srcData);
-  env->ReleaseIntArrayElements(pixels, srcData, JNI_ABORT);
-
-  jint *dstData = env->GetIntArrayElements(result, nullptr);
-  filter->apply(reinterpret_cast<int32_t *>(dstData),
-                static_cast<int32_t>(width), static_cast<int32_t>(height),
+  filter->apply(reinterpret_cast<int32_t *>(data), static_cast<int32_t>(width),
+                static_cast<int32_t>(height),
                 static_cast<image_filter::FilterType>(filterType));
-  env->ReleaseIntArrayElements(result, dstData, 0);
-
-  return result;
+  env->ReleaseIntArrayElements(pixels, data, 0);
 }
 
 // ── AudioProcessorEngine
