@@ -5,20 +5,44 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- Background circle (round icon) -->
+    <!-- Circular background -->
     <path
         android:fillColor="#FF1A1A2E"
-        android:pathData="M54,4 C27.5,4 6,25.5 6,52 C6,78.5 27.5,100 54,100 C80.5,100 102,78.5 102,52 C102,25.5 80.5,4 54,4 Z" />
+        android:pathData="M2,54 A52,52 0 1,0 106,54 A52,52 0 1,0 2,54 Z" />
 
-    <!-- Music note shape (filled teal) -->
+    <!-- Camera body with viewfinder bump (teal) -->
     <path
         android:fillColor="#FF03DAC5"
-        android:pathData="M38,72 C38,66 44,62 51,62 C58,62 64,66 64,72 C64,78 58,82 51,82 C44,82 38,78 38,72 Z" />
+        android:pathData="M21,40 Q16,40 16,45 L16,75 Q16,80 21,80 L87,80 Q92,80 92,75 L92,45 Q92,40 87,40 L75,40 L71,32 L37,32 L33,40 Z" />
+
+    <!-- Lens outer ring (dark) -->
     <path
-        android:fillColor="#FF03DAC5"
-        android:pathData="M60,28 L68,28 L68,74 L60,74 Z" />
+        android:fillColor="#FF0D0D1E"
+        android:pathData="M37,61 A17,17 0 1,0 71,61 A17,17 0 1,0 37,61 Z" />
+
+    <!-- Lens white ring -->
     <path
-        android:fillColor="#FF03DAC5"
-        android:pathData="M60,28 L80,36 L80,46 L60,42 Z" />
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M41,61 A13,13 0 1,0 67,61 A13,13 0 1,0 41,61 Z" />
+
+    <!-- Lens teal fill -->
+    <path
+        android:fillColor="#CC03DAC5"
+        android:pathData="M44,61 A10,10 0 1,0 64,61 A10,10 0 1,0 44,61 Z" />
+
+    <!-- Lens center dark pupil -->
+    <path
+        android:fillColor="#FF0D0D1E"
+        android:pathData="M50,61 A4,4 0 1,0 58,61 A4,4 0 1,0 50,61 Z" />
+
+    <!-- Flash dot (top-left of body) -->
+    <path
+        android:fillColor="#FF0D0D1E"
+        android:pathData="M24,50 A4,4 0 1,0 32,50 A4,4 0 1,0 24,50 Z" />
+
+    <!-- Lens highlight -->
+    <path
+        android:fillColor="#80FFFFFF"
+        android:pathData="M47,56 A3,3 0 1,0 53,56 A3,3 0 1,0 47,56 Z" />
 
 </vector>

@@ -11,3 +11,5 @@
 -- Detecting CXX compile features
 -- Detecting CXX compile features - done
 -- Configuring done
+-- Generating done
+-- Build files have been written to: /home/s0001861/Workspace/SamGit/android-platform-sandbox/platform/native-bridge/.cxx/Debug/2e2e431l/x86

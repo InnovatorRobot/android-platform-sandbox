@@ -1,195 +1,198 @@
 package com.mediaplatform.app
 
+import android.Manifest
 import android.content.res.ColorStateList
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.google.android.material.chip.Chip
 import com.mediaplatform.app.databinding.ActivityMainBinding
-import com.mediaplatform.core.Result
-import com.mediaplatform.library.LibraryFeature
-import com.mediaplatform.library.Track
-import com.mediaplatform.nativebridge.NativeEngine
-import com.mediaplatform.playback.PlaybackFeature
+import com.mediaplatform.camera.CameraFeature
+import com.mediaplatform.filters.FiltersFeature
+import com.mediaplatform.filters.FilterType
+import com.mediaplatform.nativebridge.ImageProcessorEngine
 import com.mediaplatform.services.ServiceRegistry
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var serviceRegistry: ServiceRegistry
-    private var playbackFeature: PlaybackFeature? = null
-    private lateinit var libraryFeature: LibraryFeature
-    private var nativeEngineReady = false
-    private var selectedTrack: Track? = null
+    private lateinit var cameraFeature: CameraFeature
+    private lateinit var filtersFeature: FiltersFeature
+    private var imageProcessor: ImageProcessorEngine? = null
+
+    private val mainHandler = Handler(Looper.getMainLooper())
+
+    // FPS tracking
+    private var frameCount = 0
+    private var lastFpsTime = System.currentTimeMillis()
+
+    // ── Permission launcher ───────────────────────────────────────────────────
+
+    private val permissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) {
+            showCamera()
+            startServices()
+        } else {
+            Toast.makeText(this, "Camera permission denied", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    // ── Lifecycle ─────────────────────────────────────────────────────────────
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
 
-        initServices()
-        updateStatusChips()
-        loadLibraryTracks()
-        setupPlaybackControls()
-    }
+        setupFilterChips()
 
-    // ── Service initialisation ─────────────────────────────────────────────
-
-    private fun initServices() {
-        serviceRegistry = ServiceRegistry()
-
-        // NativeEngine requires a compiled .so; fall back to demo mode gracefully.
-        var engineRegistered = false
-        try {
-            val engine = NativeEngine()
-            val pf = PlaybackFeature(engine)
-            serviceRegistry.register(engine)
-            serviceRegistry.register(pf)
-            playbackFeature = pf
-            engineRegistered = true
-        } catch (e: UnsatisfiedLinkError) {
-            // .so not available — demo mode
-        }
-
-        libraryFeature = LibraryFeature()
-        serviceRegistry.register(libraryFeature)
-
-        // startAll() calls nativeEngine.start() if registered — wrap it so any
-        // JNI / runtime error during native init is caught and falls back to demo mode.
-        try {
-            serviceRegistry.startAll()
-            nativeEngineReady = engineRegistered
-        } catch (e: Throwable) {
-            // Native engine failed at runtime — rebuild registry without it
-            nativeEngineReady = false
-            playbackFeature = null
-            serviceRegistry = ServiceRegistry()
-            libraryFeature = LibraryFeature()
-            serviceRegistry.register(libraryFeature)
-            serviceRegistry.startAll()
-        }
-    }
-
-    // ── Status chips ───────────────────────────────────────────────────────
-
-    private fun updateStatusChips() {
-        if (nativeEngineReady) {
-            binding.chipNativeEngine.text = "● Native Engine: Active"
-            binding.chipNativeEngine.chipBackgroundColor =
-                ColorStateList.valueOf(ContextCompat.getColor(this, R.color.chip_engine_active))
-            binding.chipNativeEngine.setTextColor(
-                ContextCompat.getColor(this, R.color.white)
-            )
+        if (hasCameraPermission()) {
+            showCamera()
+            startServices()
         } else {
-            binding.chipNativeEngine.text = "● Native Engine: Demo"
-            binding.chipNativeEngine.chipBackgroundColor =
-                ColorStateList.valueOf(ContextCompat.getColor(this, R.color.chip_engine_unavailable))
-            binding.chipNativeEngine.setTextColor(
-                ContextCompat.getColor(this, R.color.white)
-            )
-        }
-        // Services and isolation chips are always visible with fixed colours from XML.
-        binding.chipServices.setTextColor(ContextCompat.getColor(this, R.color.white))
-        binding.chipIsolation.setTextColor(ContextCompat.getColor(this, R.color.white))
-    }
-
-    // ── Library ────────────────────────────────────────────────────────────
-
-    private fun loadLibraryTracks() {
-        val result = libraryFeature.getTracks()
-        if (result !is Result.Success) return
-        val tracks = result.data
-
-        if (tracks.size >= 1) {
-            binding.track1Title.text = tracks[0].title
-            binding.track1Artist.text = tracks[0].artist
-            binding.trackRow1.setOnClickListener { selectTrack(tracks[0]) }
-        }
-        if (tracks.size >= 2) {
-            binding.track2Title.text = tracks[1].title
-            binding.track2Artist.text = tracks[1].artist
-            binding.trackRow2.setOnClickListener { selectTrack(tracks[1]) }
-        }
-        if (tracks.size >= 3) {
-            binding.track3Title.text = tracks[2].title
-            binding.track3Artist.text = tracks[2].artist
-            binding.trackRow3.setOnClickListener { selectTrack(tracks[2]) }
+            showPermissionScreen()
         }
     }
-
-    private fun selectTrack(track: Track) {
-        selectedTrack = track
-        binding.nowPlayingTitle.text = track.title
-        binding.nowPlayingArtist.text = track.artist
-
-        if (nativeEngineReady) {
-            val ok = playbackFeature?.playTrack(track.id) is Result.Success
-            updatePlaybackStateChip(if (ok) "Playing" else "Error")
-        } else {
-            // Demo mode: reflect playing state without real audio.
-            updatePlaybackStateChip("Playing")
-            Toast.makeText(this, "Demo: Now playing ${track.title}", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    // ── Playback controls ──────────────────────────────────────────────────
-
-    private fun setupPlaybackControls() {
-        binding.btnPlay.setOnClickListener {
-            if (selectedTrack == null) {
-                Toast.makeText(this, "Select a track from Your Library first", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            if (nativeEngineReady) {
-                playbackFeature?.resume()
-            }
-            updatePlaybackStateChip("Playing")
-        }
-
-        binding.btnPause.setOnClickListener {
-            if (selectedTrack == null) return@setOnClickListener
-            if (nativeEngineReady) {
-                playbackFeature?.pause()
-            }
-            updatePlaybackStateChip("Paused")
-        }
-
-        binding.btnStop.setOnClickListener {
-            if (selectedTrack == null) return@setOnClickListener
-            if (nativeEngineReady) {
-                playbackFeature?.stopPlayback()
-            }
-            updatePlaybackStateChip("Idle")
-        }
-    }
-
-    // ── Playback state chip ────────────────────────────────────────────────
-
-    private fun updatePlaybackStateChip(state: String) {
-        binding.chipPlaybackState.text = when (state) {
-            "Playing" -> "▶  Playing"
-            "Paused"  -> "⏸  Paused"
-            "Error"   -> "✕  Error"
-            else      -> "○  Idle"
-        }
-        val (bgColor, textColor) = when (state) {
-            "Playing" -> R.color.chip_playing_bg to R.color.text_on_playing
-            "Paused"  -> R.color.chip_paused_bg  to R.color.text_on_paused
-            else      -> R.color.chip_idle_bg    to R.color.text_secondary
-        }
-        binding.chipPlaybackState.chipBackgroundColor =
-            ColorStateList.valueOf(ContextCompat.getColor(this, bgColor))
-        binding.chipPlaybackState.setTextColor(
-            ContextCompat.getColor(this, textColor)
-        )
-    }
-
-    // ── Lifecycle ──────────────────────────────────────────────────────────
 
     override fun onDestroy() {
         super.onDestroy()
         serviceRegistry.stopAll()
     }
-}
 
+    // ── Permission ────────────────────────────────────────────────────────────
+
+    private fun hasCameraPermission() =
+        ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) ==
+                android.content.pm.PackageManager.PERMISSION_GRANTED
+
+    private fun showPermissionScreen() {
+        binding.permissionLayout.visibility = View.VISIBLE
+        binding.btnGrantPermission.setOnClickListener {
+            permissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
+
+    private fun showCamera() {
+        binding.permissionLayout.visibility = View.GONE
+    }
+
+    // ── Service init ──────────────────────────────────────────────────────────
+
+    private fun startServices() {
+        serviceRegistry = ServiceRegistry()
+
+        // Native image processor — gracefully degrade if .so unavailable
+        try {
+            val processor = ImageProcessorEngine()
+            serviceRegistry.register(processor)
+            imageProcessor = processor
+        } catch (e: UnsatisfiedLinkError) {
+            // Demo mode: filters show on UI but no actual pixel processing
+        }
+
+        filtersFeature = FiltersFeature()
+        cameraFeature  = CameraFeature(this, this)
+        serviceRegistry.register(filtersFeature)
+        serviceRegistry.register(cameraFeature)
+
+        // Deliver each camera frame through the C++ filter, then show on screen
+        cameraFeature.onFrameAvailable = { raw -> processAndDisplay(raw) }
+
+        try {
+            serviceRegistry.startAll()
+        } catch (e: Throwable) {
+            // If native init fails, restart without the image processor
+            imageProcessor = null
+            serviceRegistry = ServiceRegistry()
+            filtersFeature  = FiltersFeature()
+            cameraFeature   = CameraFeature(this, this)
+            cameraFeature.onFrameAvailable = { raw -> processAndDisplay(raw) }
+            serviceRegistry.register(filtersFeature)
+            serviceRegistry.register(cameraFeature)
+            serviceRegistry.startAll()
+        }
+    }
+
+    // ── Frame processing ──────────────────────────────────────────────────────
+
+    private fun processAndDisplay(raw: Bitmap) {
+        val filter     = filtersFeature.currentFilter
+        val processor  = imageProcessor
+
+        val output: Bitmap = if (processor != null && filter != FilterType.NONE) {
+            val result = processor.applyFilter(raw, filter.id)
+            if (result is com.mediaplatform.core.Result.Success) result.data else raw
+        } else {
+            raw
+        }
+
+        // Update UI on main thread
+        mainHandler.post {
+            binding.frameView.setImageBitmap(output)
+            updateFps()
+        }
+    }
+
+    private fun updateFps() {
+        frameCount++
+        val now = System.currentTimeMillis()
+        if (now - lastFpsTime >= 1000L) {
+            binding.fpsText.text = getString(R.string.filter_fps, frameCount)
+            frameCount  = 0
+            lastFpsTime = now
+        }
+    }
+
+    // ── Filter chips ──────────────────────────────────────────────────────────
+
+    private val chipFilterMap by lazy {
+        listOf(
+            binding.chipNone      to FilterType.NONE,
+            binding.chipGrayscale to FilterType.GRAYSCALE,
+            binding.chipBlur      to FilterType.BLUR,
+            binding.chipSharpen   to FilterType.SHARPEN,
+            binding.chipEdges     to FilterType.EDGE_DETECT
+        )
+    }
+
+    private fun setupFilterChips() {
+        chipFilterMap.forEach { (chip, filter) ->
+            chip.setOnClickListener { selectFilter(filter) }
+        }
+    }
+
+    private fun selectFilter(filter: FilterType) {
+        if (::filtersFeature.isInitialized) {
+            filtersFeature.selectFilter(filter)
+        }
+        binding.activeFilterLabel.text = "Filter: ${filter.displayName}"
+        updateChipAppearance(filter)
+    }
+
+    private fun updateChipAppearance(active: FilterType) {
+        chipFilterMap.forEach { (chip, filter) ->
+            val selected = filter == active
+            chip.chipBackgroundColor = ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    this,
+                    if (selected) R.color.chip_selected_bg else R.color.chip_unselected_bg
+                )
+            )
+            chip.setTextColor(
+                ContextCompat.getColor(
+                    this,
+                    if (selected) R.color.chip_text_selected else R.color.chip_text_unselected
+                )
+            )
+        }
+    }
+}

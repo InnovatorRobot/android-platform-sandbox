@@ -1,5 +1,8 @@
 # ninja log v5
-1	332	1781627528342749971	CMakeFiles/native-bridge.dir/home/s0001861/Workspace/SamGit/android-platform-sandbox/native/core-engine/src/main/cpp/engine.cpp.o	30ef04a6097e9d5f
-1	334	1781627528344749971	CMakeFiles/native-bridge.dir/home/s0001861/Workspace/SamGit/android-platform-sandbox/native/core-engine/src/main/cpp/playback_state.cpp.o	8f239747e186e232
-0	366	1781627528375749964	CMakeFiles/native-bridge.dir/jni_bridge.cpp.o	2b13e14699d74ccf
 367	392	1781627528402749959	/home/s0001861/Workspace/SamGit/android-platform-sandbox/platform/native-bridge/build/intermediates/cxx/Debug/2e2e431l/obj/x86_64/libnative-bridge.so	9fce7fc0bd0774f0
+0	366	1781627528375749964	CMakeFiles/native-bridge.dir/jni_bridge.cpp.o	2b13e14699d74ccf
+1	334	1781627528344749971	CMakeFiles/native-bridge.dir/home/s0001861/Workspace/SamGit/android-platform-sandbox/native/core-engine/src/main/cpp/playback_state.cpp.o	8f239747e186e232
+1	332	1781627528342749971	CMakeFiles/native-bridge.dir/home/s0001861/Workspace/SamGit/android-platform-sandbox/native/core-engine/src/main/cpp/engine.cpp.o	30ef04a6097e9d5f
+6	760	1781682406119865490	CMakeFiles/native-bridge.dir/home/s0001861/Workspace/SamGit/android-platform-sandbox/native/core-engine/src/main/cpp/image_filter.cpp.o	fddc4035c5d1fe2b
+5	834	1781682579757264206	CMakeFiles/native-bridge.dir/jni_bridge.cpp.o	2b13e14699d74ccf
+834	881	1781682579806264318	/home/s0001861/Workspace/SamGit/android-platform-sandbox/platform/native-bridge/build/intermediates/cxx/Debug/2e2e431l/obj/x86_64/libnative-bridge.so	759d57d17b214e95
