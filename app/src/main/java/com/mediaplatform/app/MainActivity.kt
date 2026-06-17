@@ -134,6 +134,16 @@ class MainActivity : AppCompatActivity() {
 
         try {
             serviceRegistry.startAll()
+            binding.pipelineCameraText.text = "CAMERA LIVE"
+            if (!withAudio || audioProcessor == null) {
+                binding.modeText.text = "MANUAL CAMERA FILTER"
+                binding.dbHeroText.text = "--"
+                binding.dbText.text = "NO MIC"
+                binding.filterBadge.text = "MANUAL"
+                binding.soundLevelProgress.progress = 0
+                binding.pipelineMicText.text = "MIC OFF"
+                binding.visualizerView.visibility = View.INVISIBLE
+            }
         } catch (e: Throwable) {
             // Native init failed — restart without native processors
             imageProcessor = null
@@ -145,6 +155,14 @@ class MainActivity : AppCompatActivity() {
             serviceRegistry.register(filtersFeature)
             serviceRegistry.register(cameraFeature)
             serviceRegistry.startAll()
+            binding.modeText.text = "MANUAL CAMERA FILTER"
+            binding.dbHeroText.text = "--"
+            binding.dbText.text = "NO MIC"
+            binding.filterBadge.text = "MANUAL"
+            binding.soundLevelProgress.progress = 0
+            binding.pipelineCameraText.text = "CAMERA LIVE"
+            binding.pipelineMicText.text = "MIC OFF"
+            binding.visualizerView.visibility = View.INVISIBLE
         }
     }
 
@@ -164,8 +182,15 @@ class MainActivity : AppCompatActivity() {
         mainHandler.post {
             // Auto-select the filter driven by audio level
             if (::filtersFeature.isInitialized) filtersFeature.selectFilter(filter)
-            binding.dbText.text   = "%.0f dB".format(db)
-            binding.activeFilterLabel.text = "Auto: ${filter.displayName}"
+            binding.modeText.text = "AUDIO REACTIVE CAMERA"
+            binding.dbHeroText.text = "%.0f".format(db)
+            binding.dbText.text = "dBFS"
+            binding.activeFilterLabel.text = "Auto filter: ${filter.displayName}"
+            binding.filterBadge.text = filter.displayName.uppercase()
+            binding.soundLevelProgress.progress = soundProgress(db)
+            binding.pipelineMicText.text = "MIC %.0f dB".format(db)
+            binding.pipelineCameraText.text = "CAMERA LIVE"
+            binding.visualizerView.visibility = View.VISIBLE
             updateChipAppearance(filter)
             binding.visualizerView.updateBands(bands)
         }
@@ -201,6 +226,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun soundProgress(db: Float): Int =
+        (((db + 60f) / 60f) * 100f).toInt().coerceIn(0, 100)
+
     // ── Filter chips (manual override when audio unavailable) ─────────────────
 
     private val chipFilterMap by lazy {
@@ -221,7 +249,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun selectFilter(filter: FilterType) {
         if (::filtersFeature.isInitialized) filtersFeature.selectFilter(filter)
-        binding.activeFilterLabel.text = "Filter: ${filter.displayName}"
+        binding.modeText.text = "MANUAL OVERRIDE"
+        binding.activeFilterLabel.text = "Manual filter: ${filter.displayName}"
+        binding.filterBadge.text = filter.displayName.uppercase()
         updateChipAppearance(filter)
     }
 
