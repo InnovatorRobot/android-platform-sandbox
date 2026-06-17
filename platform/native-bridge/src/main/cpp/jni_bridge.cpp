@@ -1,15 +1,17 @@
+#include "audio_processor.h"
 #include "image_filter.h"
 
 #include <android/log.h>
 #include <jni.h>
+#include <vector>
 
-#define LOG_TAG "ImageProcessor"
+#define LOG_TAG "NativeBridge"
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
 extern "C" {
 
-// ── Lifecycle
-// ─────────────────────────────────────────────────────────────────
+// ── ImageProcessorEngine
+// ──────────────────────────────────────────────────────
 
 JNIEXPORT jlong JNICALL
 Java_com_mediaplatform_nativebridge_ImageProcessorEngine_nativeCreate(
@@ -23,17 +25,6 @@ Java_com_mediaplatform_nativebridge_ImageProcessorEngine_nativeDestroy(
   delete reinterpret_cast<image_filter::ImageFilter *>(ptr);
 }
 
-// ── Filter
-// ────────────────────────────────────────────────────────────────────
-
-/**
- * Apply a filter to an ARGB_8888 pixel array.
- * @param pixels     Input int[] from Bitmap.getPixels()
- * @param width      Frame width
- * @param height     Frame height
- * @param filterType int matching image_filter::FilterType enum
- * @return           New int[] with filtered pixels, same dimensions
- */
 JNIEXPORT jintArray JNICALL
 Java_com_mediaplatform_nativebridge_ImageProcessorEngine_nativeApplyFilter(
     JNIEnv *env, jobject /*thiz*/, jlong ptr, jintArray pixels, jint width,
@@ -42,7 +33,6 @@ Java_com_mediaplatform_nativebridge_ImageProcessorEngine_nativeApplyFilter(
   auto *filter = reinterpret_cast<image_filter::ImageFilter *>(ptr);
   const jsize count = width * height;
 
-  // Copy input pixels into the output array
   jintArray result = env->NewIntArray(count);
   if (result == nullptr) {
     LOGE("Failed to allocate output array (%dx%d)", width, height);
@@ -53,13 +43,66 @@ Java_com_mediaplatform_nativebridge_ImageProcessorEngine_nativeApplyFilter(
   env->SetIntArrayRegion(result, 0, count, srcData);
   env->ReleaseIntArrayElements(pixels, srcData, JNI_ABORT);
 
-  // Apply the selected filter in-place on the output array
   jint *dstData = env->GetIntArrayElements(result, nullptr);
   filter->apply(reinterpret_cast<int32_t *>(dstData),
                 static_cast<int32_t>(width), static_cast<int32_t>(height),
                 static_cast<image_filter::FilterType>(filterType));
   env->ReleaseIntArrayElements(result, dstData, 0);
 
+  return result;
+}
+
+// ── AudioProcessorEngine
+// ──────────────────────────────────────────────────────
+
+JNIEXPORT jlong JNICALL
+Java_com_mediaplatform_nativebridge_AudioProcessorEngine_nativeCreate(
+    JNIEnv * /*env*/, jobject /*thiz*/) {
+  return reinterpret_cast<jlong>(new audio_proc::AudioProcessor());
+}
+
+JNIEXPORT void JNICALL
+Java_com_mediaplatform_nativebridge_AudioProcessorEngine_nativeDestroy(
+    JNIEnv * /*env*/, jobject /*thiz*/, jlong ptr) {
+  delete reinterpret_cast<audio_proc::AudioProcessor *>(ptr);
+}
+
+JNIEXPORT jfloat JNICALL
+Java_com_mediaplatform_nativebridge_AudioProcessorEngine_nativeComputeDb(
+    JNIEnv *env, jobject /*thiz*/, jlong ptr, jshortArray samples) {
+  auto *proc = reinterpret_cast<audio_proc::AudioProcessor *>(ptr);
+  const jsize count = env->GetArrayLength(samples);
+  jshort *data = env->GetShortArrayElements(samples, nullptr);
+  const float db = proc->computeDb(reinterpret_cast<const int16_t *>(data),
+                                   static_cast<int32_t>(count));
+  env->ReleaseShortArrayElements(samples, data, JNI_ABORT);
+  return static_cast<jfloat>(db);
+}
+
+JNIEXPORT jint JNICALL
+Java_com_mediaplatform_nativebridge_AudioProcessorEngine_nativeFilterForDb(
+    JNIEnv * /*env*/, jobject /*thiz*/, jlong ptr, jfloat db) {
+  auto *proc = reinterpret_cast<audio_proc::AudioProcessor *>(ptr);
+  return static_cast<jint>(proc->filterForDb(static_cast<float>(db)));
+}
+
+JNIEXPORT jfloatArray JNICALL
+Java_com_mediaplatform_nativebridge_AudioProcessorEngine_nativeComputeBands(
+    JNIEnv *env, jobject /*thiz*/, jlong ptr, jshortArray samples,
+    jint bandCount) {
+  auto *proc = reinterpret_cast<audio_proc::AudioProcessor *>(ptr);
+  const jsize count = env->GetArrayLength(samples);
+  jshort *data = env->GetShortArrayElements(samples, nullptr);
+
+  const std::vector<float> bands = proc->computeBands(
+      reinterpret_cast<const int16_t *>(data), static_cast<int32_t>(count),
+      static_cast<int32_t>(bandCount));
+  env->ReleaseShortArrayElements(samples, data, JNI_ABORT);
+
+  jfloatArray result = env->NewFloatArray(bandCount);
+  if (result != nullptr) {
+    env->SetFloatArrayRegion(result, 0, bandCount, bands.data());
+  }
   return result;
 }
 

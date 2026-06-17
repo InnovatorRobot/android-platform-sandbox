@@ -48,6 +48,7 @@ dependencies {
     // Feature modules
     implementation(project(":features:camera"))
     implementation(project(":features:filters"))
+    implementation(project(":features:audio"))
 
     // Android dependencies
     implementation("androidx.core:core-ktx:1.12.0")
