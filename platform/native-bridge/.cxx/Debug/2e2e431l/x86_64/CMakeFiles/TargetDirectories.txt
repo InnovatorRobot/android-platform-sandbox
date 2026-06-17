@@ -1,3 +1,0 @@
-/home/s0001861/Workspace/SamGit/android-platform-sandbox/platform/native-bridge/.cxx/Debug/2e2e431l/x86_64/CMakeFiles/native-bridge.dir
-/home/s0001861/Workspace/SamGit/android-platform-sandbox/platform/native-bridge/.cxx/Debug/2e2e431l/x86_64/CMakeFiles/edit_cache.dir
-/home/s0001861/Workspace/SamGit/android-platform-sandbox/platform/native-bridge/.cxx/Debug/2e2e431l/x86_64/CMakeFiles/rebuild_cache.dir

@@ -1,2 +1,0 @@
-ninja: Entering directory `/home/s0001861/Workspace/SamGit/android-platform-sandbox/native/core-engine/.cxx/Debug/715a113u/x86_64'
-ninja: no work to do.

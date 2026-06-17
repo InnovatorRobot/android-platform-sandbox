@@ -3,6 +3,7 @@
 # ==========================================
 
 .gradle/
+gradle/.gradle/
 build/
 out/
 
@@ -120,4 +121,7 @@ Desktop.ini
 *.key
 *.pem
 secrets/
+
+# Android local config (machine-specific SDK paths)
+local.properties
 
