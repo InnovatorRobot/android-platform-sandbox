@@ -20,7 +20,6 @@ include(":app")
 
 // Platform modules
 include(":platform:core")
-include(":platform:state")
 include(":platform:services")
 include(":platform:native-bridge")
 

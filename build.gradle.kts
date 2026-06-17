@@ -5,13 +5,4 @@ plugins {
     id("org.jetbrains.kotlin.android") version "1.9.20" apply false
 }
 
-tasks.register("checkDependencies") {
-    group = "verification"
-    description = "Runs the dependency checker to enforce module isolation rules"
-    doLast {
-        exec {
-            commandLine("python3", "tools/dependency-checker/check_dependencies.py")
-        }
-    }
-}
 

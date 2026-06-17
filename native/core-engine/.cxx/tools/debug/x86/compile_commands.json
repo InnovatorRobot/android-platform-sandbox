@@ -1,7 +1,0 @@
-[
-{
-  "directory": "/home/s0001861/Workspace/SamGit/android-platform-sandbox/native/core-engine/.cxx/Debug/715a113u/x86",
-  "command": "/home/s0001861/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++ --target=i686-none-linux-android24 --sysroot=/home/s0001861/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot -I/home/s0001861/Workspace/SamGit/android-platform-sandbox/native/core-engine/src/main/cpp -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -std=c++17 -fno-limit-debug-info  -fPIC -std=c++17 -o CMakeFiles/core-engine.dir/image_filter.cpp.o -c /home/s0001861/Workspace/SamGit/android-platform-sandbox/native/core-engine/src/main/cpp/image_filter.cpp",
-  "file": "/home/s0001861/Workspace/SamGit/android-platform-sandbox/native/core-engine/src/main/cpp/image_filter.cpp"
-}
-]

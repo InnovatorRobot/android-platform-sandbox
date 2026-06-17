@@ -1,4 +1,0 @@
-# ninja log v5
-790	814	1781627273208805562	/home/s0001861/Workspace/SamGit/android-platform-sandbox/native/core-engine/build/intermediates/cxx/Debug/715a113u/obj/x86_64/libcore-engine.so	3501f767e10a2673
-0	790	1781627273181805568	CMakeFiles/core-engine.dir/engine.cpp.o	737515f9723d4c3c
-5	712	1781627273102805587	CMakeFiles/core-engine.dir/playback_state.cpp.o	5f3fb1e7e72dea87
