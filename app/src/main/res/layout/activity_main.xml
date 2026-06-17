@@ -6,186 +6,378 @@
     android:layout_height="match_parent"
     android:background="@color/frame_bg">
 
-    <!-- ── Live filtered frame ───────────────────────────────────────────── -->
     <ImageView
         android:id="@+id/frameView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"
         android:background="@color/frame_bg"
-        android:contentDescription="Camera preview" />
+        android:contentDescription="Camera preview"
+        android:scaleType="centerCrop" />
 
-    <!-- ── Top bar ────────────────────────────────────────────────────────── -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/studio_scrim" />
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:paddingTop="48dp"
-        android:paddingBottom="12dp"
-        android:background="#88000000">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="FilterLens"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/white" />
-
-        <TextView
-            android:id="@+id/dbText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textSize="12sp"
-            android:textColor="@color/teal_200"
-            android:layout_marginEnd="12dp" />
-
-        <TextView
-            android:id="@+id/fpsText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textSize="13sp"
-            android:textColor="@color/teal_200" />
-
-    </LinearLayout>
-
-    <!-- ── Audio visualizer strip (above filter chips) ─────────────────────── -->
-    <com.mediaplatform.app.AudioVisualizerView
-        android:id="@+id/visualizerView"
-        android:layout_width="match_parent"
-        android:layout_height="72dp"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="112dp" />
-
-    <!-- ── Bottom controls ───────────────────────────────────────────────── -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@color/overlay_bg"
-        android:paddingTop="16dp"
-        android:paddingBottom="32dp">
+        android:paddingStart="18dp"
+        android:paddingTop="42dp"
+        android:paddingEnd="18dp"
+        android:paddingBottom="18dp">
 
-        <!-- Filter chip row -->
-        <HorizontalScrollView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scrollbars="none"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:layout_marginBottom="12dp">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <LinearLayout
-                android:id="@+id/chipRow"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-                <!-- Original -->
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipNone"
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Original"
-                    android:layout_marginEnd="8dp"
-                    app:chipBackgroundColor="@color/chip_selected_bg"
-                    android:textColor="@color/chip_text_selected" />
+                    android:text="FilterLens"
+                    android:textColor="@color/white"
+                    android:textSize="26sp"
+                    android:textStyle="bold" />
 
-                <!-- Grayscale -->
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipGrayscale"
+                <TextView
+                    android:id="@+id/modeText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Grayscale"
-                    android:layout_marginEnd="8dp"
-                    app:chipBackgroundColor="@color/chip_unselected_bg"
-                    android:textColor="@color/chip_text_unselected" />
-
-                <!-- Blur -->
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipBlur"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Blur"
-                    android:layout_marginEnd="8dp"
-                    app:chipBackgroundColor="@color/chip_unselected_bg"
-                    android:textColor="@color/chip_text_unselected" />
-
-                <!-- Sharpen -->
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipSharpen"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sharpen"
-                    android:layout_marginEnd="8dp"
-                    app:chipBackgroundColor="@color/chip_unselected_bg"
-                    android:textColor="@color/chip_text_unselected" />
-
-                <!-- Edges -->
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipEdges"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Edges"
-                    app:chipBackgroundColor="@color/chip_unselected_bg"
-                    android:textColor="@color/chip_text_unselected" />
+                    android:layout_marginTop="3dp"
+                    android:text="AUDIO REACTIVE STUDIO"
+                    android:textColor="@color/studio_accent"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
-        </HorizontalScrollView>
+            <TextView
+                android:id="@+id/fpsText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_metric_pill"
+                android:paddingStart="12dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="8dp"
+                android:text="-- fps"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:textStyle="bold" />
 
-        <!-- Active filter label -->
-        <TextView
-            android:id="@+id/activeFilterLabel"
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Filter: Original"
-            android:textSize="12sp"
-            android:textColor="@color/status_text"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp" />
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_glass_panel"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/reactorLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="LIVE INPUT"
+                            android:textColor="@color/studio_accent"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:gravity="bottom"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/dbHeroText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="--"
+                                android:textColor="@color/white"
+                                android:textSize="58sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/dbText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:layout_marginBottom="11dp"
+                                android:text="dBFS"
+                                android:textColor="@color/status_text"
+                                android:textSize="14sp" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/filterBadge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_filter_badge"
+                        android:paddingStart="14dp"
+                        android:paddingTop="10dp"
+                        android:paddingEnd="14dp"
+                        android:paddingBottom="10dp"
+                        android:text="ORIGINAL"
+                        android:textColor="@color/chip_text_selected"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <ProgressBar
+                    android:id="@+id/soundLevelProgress"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:layout_marginTop="8dp"
+                    android:indeterminate="false"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/progress_sound_meter" />
+
+                <TextView
+                    android:id="@+id/activeFilterLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Auto filter: Original"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <com.mediaplatform.app.AudioVisualizerView
+                    android:id="@+id/visualizerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="136dp"
+                    android:layout_marginTop="12dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/pipelineCameraText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="7dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_metric_pill"
+                    android:gravity="center"
+                    android:paddingTop="9dp"
+                    android:paddingBottom="9dp"
+                    android:text="CAMERA LIVE"
+                    android:textColor="@color/white"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/pipelineMicText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="7dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_metric_pill"
+                    android:gravity="center"
+                    android:paddingTop="9dp"
+                    android:paddingBottom="9dp"
+                    android:text="MIC LISTENING"
+                    android:textColor="@color/white"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/chipRow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipNone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:text="Original"
+                        android:textColor="@color/chip_text_selected"
+                        app:chipBackgroundColor="@color/chip_selected_bg" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipGrayscale"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:text="Grayscale"
+                        android:textColor="@color/chip_text_unselected"
+                        app:chipBackgroundColor="@color/chip_unselected_bg" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipBlur"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:text="Blur"
+                        android:textColor="@color/chip_text_unselected"
+                        app:chipBackgroundColor="@color/chip_unselected_bg" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipSharpen"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:text="Sharpen"
+                        android:textColor="@color/chip_text_unselected"
+                        app:chipBackgroundColor="@color/chip_unselected_bg" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipEdges"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Edges"
+                        android:textColor="@color/chip_text_unselected"
+                        app:chipBackgroundColor="@color/chip_unselected_bg" />
+
+                </LinearLayout>
+
+            </HorizontalScrollView>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="118dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_future_tile"
+                        android:padding="12dp"
+                        android:text="Capture\nComing next"
+                        android:textColor="@color/status_text"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="118dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_future_tile"
+                        android:padding="12dp"
+                        android:text="Preset Deck\nComing next"
+                        android:textColor="@color/status_text"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="118dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_future_tile"
+                        android:padding="12dp"
+                        android:text="Beat Sync\nComing next"
+                        android:textColor="@color/status_text"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="118dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_future_tile"
+                        android:padding="12dp"
+                        android:text="Export Clip\nComing next"
+                        android:textColor="@color/status_text"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+            </HorizontalScrollView>
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <!-- ── No-permission overlay (hidden by default) ─────────────────────── -->
     <LinearLayout
         android:id="@+id/permissionLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center"
         android:background="@color/permission_bg"
+        android:gravity="center"
+        android:orientation="vertical"
         android:padding="32dp"
         android:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="📷"
-            android:textSize="64sp"
-            android:layout_marginBottom="16dp" />
+            android:text="FilterLens"
+            android:textColor="@color/white"
+            android:textSize="32sp"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/permission_required"
-            android:textSize="16sp"
-            android:textColor="@color/white"
+            android:layout_marginTop="8dp"
             android:gravity="center"
-            android:layout_marginBottom="24dp" />
+            android:text="@string/permission_required"
+            android:textColor="@color/status_text"
+            android:textSize="16sp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnGrantPermission"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
             android:text="@string/grant_permission"
             app:cornerRadius="24dp" />
 

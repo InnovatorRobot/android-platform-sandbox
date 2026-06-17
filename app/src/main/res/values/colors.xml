@@ -17,4 +17,14 @@
     <color name="chip_text_selected">#FF000000</color>
     <color name="status_text">#99FFFFFF</color>
     <color name="permission_bg">#FF121212</color>
+
+    <!-- Audio-reactive UI palette -->
+    <color name="reactor_camera_scrim">#66000000</color>
+    <color name="reactor_panel_bg">#E6111420</color>
+    <color name="reactor_chip_bg">#3327E0D5</color>
+    <color name="reactor_accent">#FF58F3E6</color>
+
+    <!-- Studio UI palette -->
+    <color name="studio_scrim">#7A070A12</color>
+    <color name="studio_accent">#FF4DF2D8</color>
 </resources>
