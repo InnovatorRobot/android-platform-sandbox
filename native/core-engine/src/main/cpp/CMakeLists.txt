@@ -9,6 +9,7 @@ add_library(
     core-engine
     STATIC
     image_filter.cpp
+    audio_processor.cpp
 )
 
 target_include_directories(

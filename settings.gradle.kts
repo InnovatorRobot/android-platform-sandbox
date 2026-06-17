@@ -26,6 +26,7 @@ include(":platform:native-bridge")
 // Feature modules
 include(":features:camera")
 include(":features:filters")
+include(":features:audio")
 
 // Native module
 include(":native:core-engine")

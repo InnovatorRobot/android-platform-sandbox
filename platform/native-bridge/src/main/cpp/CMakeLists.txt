@@ -13,6 +13,7 @@ add_library(
     SHARED
     jni_bridge.cpp
     ${CORE_ENGINE_DIR}/image_filter.cpp
+    ${CORE_ENGINE_DIR}/audio_processor.cpp
 )
 
 target_include_directories(
