@@ -6,6 +6,8 @@ import android.graphics.Matrix
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
+import androidx.camera.core.resolutionselector.ResolutionSelector
+import androidx.camera.core.resolutionselector.ResolutionStrategy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
@@ -45,9 +47,22 @@ class CameraFeature(private val context: Context, private val lifecycleOwner: Li
     }
 
     private fun bindCamera() {
+        // Cap the analysis resolution. setTargetResolution is unreliable on some
+        // devices (this MediaTek picked 1080x1080); ResolutionStrategy with a
+        // lower-fallback rule keeps frames small enough for real-time filtering.
+        val resolutionSelector =
+                ResolutionSelector.Builder()
+                        .setResolutionStrategy(
+                                ResolutionStrategy(
+                                        android.util.Size(640, 480),
+                                        ResolutionStrategy.FALLBACK_RULE_CLOSEST_LOWER_THEN_HIGHER
+                                )
+                        )
+                        .build()
+
         val imageAnalysis =
                 ImageAnalysis.Builder()
-                        .setTargetResolution(android.util.Size(960, 540))
+                        .setResolutionSelector(resolutionSelector)
                         .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                         .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
                         .build()

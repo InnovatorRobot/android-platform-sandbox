@@ -12,6 +12,16 @@ add_library(
     audio_processor.cpp
 )
 
+# Always optimize the compute kernels, even in debug builds. Without this the
+# NDK compiles at -O0, which makes the per-pixel convolution several times
+# slower than necessary.
+target_compile_options(
+    core-engine
+    PRIVATE
+    -O3
+    -ffast-math
+)
+
 target_include_directories(
     core-engine
     PUBLIC

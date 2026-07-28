@@ -12,12 +12,11 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.google.android.material.chip.Chip
 import com.mediaplatform.app.databinding.ActivityMainBinding
 import com.mediaplatform.audio.AudioFeature
 import com.mediaplatform.camera.CameraFeature
-import com.mediaplatform.filters.FiltersFeature
 import com.mediaplatform.filters.FilterType
+import com.mediaplatform.filters.FiltersFeature
 import com.mediaplatform.nativebridge.AudioProcessorEngine
 import com.mediaplatform.nativebridge.ImageProcessorEngine
 import com.mediaplatform.services.ServiceRegistry
@@ -35,23 +34,23 @@ class MainActivity : AppCompatActivity() {
     private val mainHandler = Handler(Looper.getMainLooper())
 
     // FPS tracking
-    private var frameCount  = 0
+    private var frameCount = 0
     private var lastFpsTime = System.currentTimeMillis()
 
     // ── Permission launcher (camera + mic together) ───────────────────────────
 
-    private val permissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { results ->
-        val cameraGranted = results[Manifest.permission.CAMERA] == true
-        val audioGranted  = results[Manifest.permission.RECORD_AUDIO] == true
-        if (cameraGranted) {
-            showCamera()
-            startServices(audioGranted)
-        } else {
-            Toast.makeText(this, "Camera permission is required", Toast.LENGTH_LONG).show()
-        }
-    }
+    private val permissionLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+                    results ->
+                val cameraGranted = results[Manifest.permission.CAMERA] == true
+                val audioGranted = results[Manifest.permission.RECORD_AUDIO] == true
+                if (cameraGranted) {
+                    showCamera()
+                    startServices(audioGranted)
+                } else {
+                    Toast.makeText(this, "Camera permission is required", Toast.LENGTH_LONG).show()
+                }
+            }
 
     // ── Lifecycle ─────────────────────────────────────────────────────────────
 
@@ -63,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         setupFilterChips()
 
         val cameraOk = hasPermission(Manifest.permission.CAMERA)
-        val audioOk  = hasPermission(Manifest.permission.RECORD_AUDIO)
+        val audioOk = hasPermission(Manifest.permission.RECORD_AUDIO)
 
         if (cameraOk) {
             showCamera()
@@ -81,15 +80,14 @@ class MainActivity : AppCompatActivity() {
     // ── Permissions ───────────────────────────────────────────────────────────
 
     private fun hasPermission(perm: String) =
-        ContextCompat.checkSelfPermission(this, perm) == PackageManager.PERMISSION_GRANTED
+            ContextCompat.checkSelfPermission(this, perm) == PackageManager.PERMISSION_GRANTED
 
     private fun showPermissionScreen() {
         binding.permissionLayout.visibility = View.VISIBLE
         binding.btnGrantPermission.setOnClickListener {
-            permissionLauncher.launch(arrayOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.RECORD_AUDIO
-            ))
+            permissionLauncher.launch(
+                    arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
+            )
         }
     }
 
@@ -107,7 +105,7 @@ class MainActivity : AppCompatActivity() {
             val ip = ImageProcessorEngine()
             serviceRegistry.register(ip)
             imageProcessor = ip
-        } catch (_: UnsatisfiedLinkError) { }
+        } catch (_: UnsatisfiedLinkError) {}
 
         // Audio processor (graceful degrade if .so unavailable or no permission)
         if (withAudio) {
@@ -115,12 +113,12 @@ class MainActivity : AppCompatActivity() {
                 val ap = AudioProcessorEngine()
                 serviceRegistry.register(ap)
                 audioProcessor = ap
-            } catch (_: UnsatisfiedLinkError) { }
+            } catch (_: UnsatisfiedLinkError) {}
         }
 
         filtersFeature = FiltersFeature()
-        cameraFeature  = CameraFeature(this, this)
-        audioFeature   = AudioFeature()
+        cameraFeature = CameraFeature(this, this)
+        audioFeature = AudioFeature()
 
         serviceRegistry.register(filtersFeature)
         serviceRegistry.register(cameraFeature)
@@ -149,8 +147,8 @@ class MainActivity : AppCompatActivity() {
             imageProcessor = null
             audioProcessor = null
             serviceRegistry = ServiceRegistry()
-            filtersFeature  = FiltersFeature()
-            cameraFeature   = CameraFeature(this, this)
+            filtersFeature = FiltersFeature()
+            cameraFeature = CameraFeature(this, this)
             cameraFeature.onFrameAvailable = { raw -> processAndDisplay(raw) }
             serviceRegistry.register(filtersFeature)
             serviceRegistry.register(cameraFeature)
@@ -172,9 +170,9 @@ class MainActivity : AppCompatActivity() {
     private fun processAudio(samples: ShortArray) {
         val ap = audioProcessor ?: return
 
-        val db     = ap.computeDb(samples)
+        val db = ap.computeDb(samples)
         val typeId = ap.filterForDb(db)
-        val bands  = ap.computeBands(samples, 16)
+        val bands = ap.computeBands(samples, 16)
 
         // Find the matching FilterType from the int id
         val filter = FilterType.entries.firstOrNull { it.id == typeId } ?: FilterType.NONE
@@ -200,18 +198,30 @@ class MainActivity : AppCompatActivity() {
 
     /** Runs on the CameraX analyser thread. */
     private fun processAndDisplay(raw: Bitmap) {
-        val filter    = filtersFeature.currentFilter
+        val filter = filtersFeature.currentFilter
         val processor = imageProcessor
 
-        val output: Bitmap = if (processor != null && filter != FilterType.NONE) {
-            val result = processor.applyFilter(raw, filter.id)
-            if (result is com.mediaplatform.core.Result.Success) result.data else raw
-        } else {
-            raw
-        }
+        val tFilter = System.nanoTime()
+        val output: Bitmap =
+                if (processor != null && filter != FilterType.NONE) {
+                    val result = processor.applyFilter(raw, filter.id)
+                    if (result is com.mediaplatform.core.Result.Success) result.data else raw
+                } else {
+                    raw
+                }
+        val filterMs = (System.nanoTime() - tFilter) / 1_000_000.0
+        android.util.Log.d(
+                "FLPerf",
+                "size=${raw.width}x${raw.height} filter=${filter.name} filterMs=%.1f".format(
+                        filterMs
+                )
+        )
 
         mainHandler.post {
+            val tSet = System.nanoTime()
             binding.frameView.setImageBitmap(output)
+            val setMs = (System.nanoTime() - tSet) / 1_000_000.0
+            android.util.Log.d("FLPerf", "setImageBitmapMs=%.1f".format(setMs))
             updateFps()
         }
     }
@@ -221,30 +231,27 @@ class MainActivity : AppCompatActivity() {
         val now = System.currentTimeMillis()
         if (now - lastFpsTime >= 1000L) {
             binding.fpsText.text = getString(R.string.filter_fps, frameCount)
-            frameCount  = 0
+            frameCount = 0
             lastFpsTime = now
         }
     }
 
-    private fun soundProgress(db: Float): Int =
-        (((db + 60f) / 60f) * 100f).toInt().coerceIn(0, 100)
+    private fun soundProgress(db: Float): Int = (((db + 60f) / 60f) * 100f).toInt().coerceIn(0, 100)
 
     // ── Filter chips (manual override when audio unavailable) ─────────────────
 
     private val chipFilterMap by lazy {
         listOf(
-            binding.chipNone      to FilterType.NONE,
-            binding.chipGrayscale to FilterType.GRAYSCALE,
-            binding.chipBlur      to FilterType.BLUR,
-            binding.chipSharpen   to FilterType.SHARPEN,
-            binding.chipEdges     to FilterType.EDGE_DETECT
+                binding.chipNone to FilterType.NONE,
+                binding.chipGrayscale to FilterType.GRAYSCALE,
+                binding.chipBlur to FilterType.BLUR,
+                binding.chipSharpen to FilterType.SHARPEN,
+                binding.chipEdges to FilterType.EDGE_DETECT
         )
     }
 
     private fun setupFilterChips() {
-        chipFilterMap.forEach { (chip, filter) ->
-            chip.setOnClickListener { selectFilter(filter) }
-        }
+        chipFilterMap.forEach { (chip, filter) -> chip.setOnClickListener { selectFilter(filter) } }
     }
 
     private fun selectFilter(filter: FilterType) {
@@ -258,17 +265,20 @@ class MainActivity : AppCompatActivity() {
     private fun updateChipAppearance(active: FilterType) {
         chipFilterMap.forEach { (chip, filter) ->
             val selected = filter == active
-            chip.chipBackgroundColor = ColorStateList.valueOf(
-                ContextCompat.getColor(
-                    this,
-                    if (selected) R.color.chip_selected_bg else R.color.chip_unselected_bg
-                )
-            )
+            chip.chipBackgroundColor =
+                    ColorStateList.valueOf(
+                            ContextCompat.getColor(
+                                    this,
+                                    if (selected) R.color.chip_selected_bg
+                                    else R.color.chip_unselected_bg
+                            )
+                    )
             chip.setTextColor(
-                ContextCompat.getColor(
-                    this,
-                    if (selected) R.color.chip_text_selected else R.color.chip_text_unselected
-                )
+                    ContextCompat.getColor(
+                            this,
+                            if (selected) R.color.chip_text_selected
+                            else R.color.chip_text_unselected
+                    )
             )
         }
     }

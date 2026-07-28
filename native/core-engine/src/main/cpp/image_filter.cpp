@@ -64,35 +64,58 @@ void ImageFilter::applyGrayscale(int32_t *pixels, int32_t width,
 void ImageFilter::applyKernel(int32_t *pixels, int32_t width, int32_t height,
                               const float kernel[9], float scale,
                               bool absValues) const {
-  // Work on a copy so we don't read partially-written output
+  // Work on a copy so we don't read partially-written output.
   std::vector<int32_t> src(pixels, pixels + width * height);
+  const int32_t *s = src.data();
+
+  // Precompute integer kernel weights (fixed-point) to avoid float math in the
+  // hot loop. Weights are small integers (e.g. ±1, 5, 8); scale is applied
+  // once.
+  int32_t ik[9];
+  for (int32_t i = 0; i < 9; ++i) {
+    ik[i] = static_cast<int32_t>(kernel[i]);
+  }
 
   for (int32_t y = 1; y < height - 1; ++y) {
+    const int32_t *row0 = s + (y - 1) * width;
+    const int32_t *row1 = s + y * width;
+    const int32_t *row2 = s + (y + 1) * width;
+    int32_t *out = pixels + y * width;
+
     for (int32_t x = 1; x < width - 1; ++x) {
-      float r = 0.0F, g = 0.0F, b = 0.0F;
-      int32_t k = 0;
-      for (int32_t dy = -1; dy <= 1; ++dy) {
-        for (int32_t dx = -1; dx <= 1; ++dx) {
-          const int32_t p = src[(y + dy) * width + (x + dx)];
-          r += static_cast<float>(redOf(p)) * kernel[k];
-          g += static_cast<float>(greenOf(p)) * kernel[k];
-          b += static_cast<float>(blueOf(p)) * kernel[k];
-          ++k;
-        }
+      int32_t r = 0, g = 0, b = 0;
+
+      // Unrolled 3×3 convolution over the three rows.
+      const int32_t p00 = row0[x - 1], p01 = row0[x], p02 = row0[x + 1];
+      const int32_t p10 = row1[x - 1], p11 = row1[x], p12 = row1[x + 1];
+      const int32_t p20 = row2[x - 1], p21 = row2[x], p22 = row2[x + 1];
+
+      r = ((p00 >> 16) & 0xFF) * ik[0] + ((p01 >> 16) & 0xFF) * ik[1] +
+          ((p02 >> 16) & 0xFF) * ik[2] + ((p10 >> 16) & 0xFF) * ik[3] +
+          ((p11 >> 16) & 0xFF) * ik[4] + ((p12 >> 16) & 0xFF) * ik[5] +
+          ((p20 >> 16) & 0xFF) * ik[6] + ((p21 >> 16) & 0xFF) * ik[7] +
+          ((p22 >> 16) & 0xFF) * ik[8];
+      g = ((p00 >> 8) & 0xFF) * ik[0] + ((p01 >> 8) & 0xFF) * ik[1] +
+          ((p02 >> 8) & 0xFF) * ik[2] + ((p10 >> 8) & 0xFF) * ik[3] +
+          ((p11 >> 8) & 0xFF) * ik[4] + ((p12 >> 8) & 0xFF) * ik[5] +
+          ((p20 >> 8) & 0xFF) * ik[6] + ((p21 >> 8) & 0xFF) * ik[7] +
+          ((p22 >> 8) & 0xFF) * ik[8];
+      b = (p00 & 0xFF) * ik[0] + (p01 & 0xFF) * ik[1] + (p02 & 0xFF) * ik[2] +
+          (p10 & 0xFF) * ik[3] + (p11 & 0xFF) * ik[4] + (p12 & 0xFF) * ik[5] +
+          (p20 & 0xFF) * ik[6] + (p21 & 0xFF) * ik[7] + (p22 & 0xFF) * ik[8];
+
+      if (scale != 1.0F) {
+        r = static_cast<int32_t>(static_cast<float>(r) * scale);
+        g = static_cast<int32_t>(static_cast<float>(g) * scale);
+        b = static_cast<int32_t>(static_cast<float>(b) * scale);
       }
-      r *= scale;
-      g *= scale;
-      b *= scale;
       if (absValues) {
-        r = std::abs(r);
-        g = std::abs(g);
-        b = std::abs(b);
+        r = r < 0 ? -r : r;
+        g = g < 0 ? -g : g;
+        b = b < 0 ? -b : b;
       }
 
-      const int32_t orig = src[y * width + x];
-      pixels[y * width + x] = argbPack(
-          alphaOf(orig), clamp(static_cast<int32_t>(r)),
-          clamp(static_cast<int32_t>(g)), clamp(static_cast<int32_t>(b)));
+      out[x] = argbPack(alphaOf(p11), clamp(r), clamp(g), clamp(b));
     }
   }
 }
